@@ -14,7 +14,8 @@ const server = new ApolloServer({
   resolvers,
 });
 
-// Create a new instance of an Apollo server with the GraphQL schema
+
+
 const startApolloServer = async () => {
   await server.start();
 
@@ -23,9 +24,11 @@ const startApolloServer = async () => {
 
   // Serve up static assets
   app.use('/images', express.static(path.join(__dirname, '../client/images')));
+  app.use('/serviceWorker.js', express.static(path.join(__dirname, '../client/src/serviceWorker.js')));
+  app.use('/manifest.json', express.static(path.join(__dirname, '../client/public/manifest.json')));
 
   app.use('/graphql', expressMiddleware(server, {
-    context: authMiddleware
+    context: authMiddleware,
   }));
 
   if (process.env.NODE_ENV === 'production') {
@@ -43,6 +46,7 @@ const startApolloServer = async () => {
     });
   });
 };
+
 
 // Call the async function to start the server
 startApolloServer();
