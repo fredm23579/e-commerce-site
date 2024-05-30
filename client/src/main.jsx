@@ -1,8 +1,8 @@
-import ReactDOM from 'react-dom/client'
-import './index.css'
+import ReactDOM from 'react-dom/client';
+import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-import App from './App.jsx';
+import App from './App';
 import Home from './pages/Home';
 import Detail from './pages/Detail';
 import NoMatch from './pages/NoMatch';
@@ -14,9 +14,9 @@ import OrderHistory from './pages/OrderHistory';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/serviceWorker.js').then((registration) => {
-      console.log('SW registered: ', registration);
-    }).catch((registrationError) => {
-      console.log('SW registration failed: ', registrationError);
+      console.log('Service Worker registered: ', registration);
+    }).catch((error) => {
+      console.error('Service Worker registration failed: ', error);
     });
   });
 }
@@ -25,31 +25,23 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
-    error: <NoMatch />,
+    errorElement: <NoMatch />,
     children: [
-      {
-        index: true, 
-        element: <Home />
-      }, {
-        path: '/login',
-        element: <Login />
-      }, {
-        path: '/signup',
-        element: <Signup />
-      }, {
-        path: '/success',
-        element: <Success />
-      }, {
-        path: '/orderHistory',
-        element: <OrderHistory />
-      }, {
-        path: '/products/:id',
-        element: <Detail />
-      }
+      { index: true, element: <Home /> },
+      { path: 'login', element: <Login /> },
+      { path: 'signup', element: <Signup /> },
+      { path: 'success', element: <Success /> },
+      { path: 'orderHistory', element: <OrderHistory /> },
+      { path: 'products/:id', element: <Detail /> }
     ]
   }
 ]);
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <RouterProvider router={router} />
-)
+const rootElement = document.getElementById('root');
+const root = ReactDOM.createRoot(rootElement);
+
+root.render(
+  <React.StrictMode>
+    <RouterProvider router={router} />
+  </React.StrictMode>
+);
