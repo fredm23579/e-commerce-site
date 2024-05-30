@@ -1,7 +1,7 @@
 
   <div align="center">
-  <h1 align="center">e commerce wensite</h1>
-  <h3>Codebase for the e commerce wensite platform</h3>
+  <h1 align="center">E Commerce Website</h1>
+  <h3>Codebase for the E Commerce Wensite platform</h3>
   <h3>◦ Developed with the software and tools below.</h3>
   <p align="center"><img src="https://img.shields.io/badge/-Node.js-004E89?logo=Node.js&style=for-the-badge" alt='Node.js\' />
 <img src="https://via.placeholder.com/1/0000/00000000" alt="spacer" /><img src="https://img.shields.io/badge/-Express.js-004E89?logo=Express.js&style=for-the-badge" alt='Express.js\' />
