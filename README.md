@@ -326,7 +326,7 @@ Cloning the Project
 
 To get started, clone the MERN Shopping project from GitHub:
 ```bash
-git clone https://github.com/your-username/mern-shopping.git
+git clone https://github.com/fredm23579/e-commerce-site.git
 ```
 Installing Dependencies
 -----------------------
@@ -346,6 +346,4 @@ Running the Application
 
 To run the application
 
----
 
-Generated with ❤️ by [ReadMeAI](https://www.readmeai.co/).
