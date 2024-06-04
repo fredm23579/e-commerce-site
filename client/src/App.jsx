@@ -1,5 +1,5 @@
 import { Suspense, lazy } from 'react';
-import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import {
   ApolloClient,
   InMemoryCache,
@@ -11,7 +11,7 @@ import { onError } from '@apollo/client/link/error';
 
 import Nav from './components/Nav';
 import { StoreProvider } from './utils/GlobalState';
-import Loading from './components/Loading'; // A loading component for Suspense
+import Loading from './components/Loading';
 
 const httpLink = createHttpLink({
   uri: '/graphql',
@@ -44,31 +44,6 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-// Lazy load components for code splitting
-const Home = lazy(() => import('./pages/Home'));
-const Detail = lazy(() => import('./pages/Detail'));
-const NoMatch = lazy(() => import('./pages/NoMatch'));
-const Login = lazy(() => import('./pages/Login'));
-const Signup = lazy(() => import('./pages/Signup'));
-const Success = lazy(() => import('./pages/Success'));
-const OrderHistory = lazy(() => import('./pages/OrderHistory'));
-
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <App />,
-    errorElement: <NoMatch />,
-    children: [
-      { index: true, element: <Home /> },
-      { path: 'login', element: <Login /> },
-      { path: 'signup', element: <Signup /> },
-      { path: 'success', element: <Success /> },
-      { path: 'orderHistory', element: <OrderHistory /> },
-      { path: 'products/:id', element: <Detail /> }
-    ]
-  }
-]);
-
 function App() {
   return (
     <ApolloProvider client={client}>
@@ -81,14 +56,5 @@ function App() {
     </ApolloProvider>
   );
 }
-
-const rootElement = document.getElementById('root');
-const root = ReactDOM.createRoot(rootElement);
-
-root.render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>
-);
 
 export default App;

@@ -17,18 +17,7 @@ export default defineConfig({
         display: 'standalone',
         background_color: '#ffffff',
         theme_color: '#000000',
-        icons: [
-          {
-            src: '/icons/icon-192x192.png',
-            sizes: '192x192',
-            type: 'image/png',
-          },
-          {
-            src: '/icons/icon-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-          },
-        ],
+        
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,png,jpg,svg}'],
@@ -55,9 +44,20 @@ export default defineConfig({
               },
             },
           },
+          {
+            urlPattern: ({ request }) => request.destination === 'image',
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'image-cache',
+              expiration: {
+                maxEntries: 60,
+                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+              },
+            },
+          },
         ],
-      },
-    }),
+      }
+    })
   ],
   build: {
     outDir: 'dist',
@@ -81,5 +81,5 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'happy-dom',
-  },
+  }
 });
