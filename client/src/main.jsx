@@ -1,31 +1,23 @@
-import React, { Suspense, lazy } from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import React, { Suspense, lazy } from 'react';
 
 import App from './App.jsx';
 import './index.css';
-import Loading from './components/Loading'; // Ensure you have a Loading component
-
-const Home = lazy(() => import('./pages/Home'));
-const Detail = lazy(() => import('./pages/Detail'));
-const NoMatch = lazy(() => import('./pages/NoMatch'));
-const Login = lazy(() => import('./pages/Login'));
-const Signup = lazy(() => import('./pages/Signup'));
-const Success = lazy(() => import('./pages/Success'));
-const OrderHistory = lazy(() => import('./pages/OrderHistory'));
+import Loading from './components/Loading'; // Ensure this component is created or exists
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
-    errorElement: <NoMatch />,
+    errorElement: <Suspense fallback={<Loading />}><lazy(() => import('./pages/NoMatch')) /></Suspense>,
     children: [
-      { index: true, element: <Home /> },
-      { path: 'login', element: <Login /> },
-      { path: 'signup', element: <Signup /> },
-      { path: 'success', element: <Success /> },
-      { path: 'orderHistory', element: <OrderHistory /> },
-      { path: 'products/:id', element: <Detail /> }
+      { index: true, element: <Suspense fallback={<Loading />}><lazy(() => import('./pages/Home')) /></Suspense> },
+      { path: 'login', element: <Suspense fallback={<Loading />}><lazy(() => import('./pages/Login')) /></Suspense> },
+      { path: 'signup', element: <Suspense fallback={<Loading />}><lazy(() => import('./pages/Signup')) /></Suspense> },
+      { path: 'success', element: <Suspense fallback={<Loading />}><lazy(() => import('./pages/Success')) /></Suspense> },
+      { path: 'orderHistory', element: <Suspense fallback={<Loading />}><lazy(() => import('./pages/OrderHistory')) /></Suspense> },
+      { path: 'products/:id', element: <Suspense fallback={<Loading />}><lazy(() => import('./pages/Detail')) /></Suspense> }
     ]
   }
 ]);
@@ -33,18 +25,6 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <Suspense fallback={<Loading />}>
-      <RouterProvider router={router} />
-    </Suspense>
+    <RouterProvider router={router} />
   </React.StrictMode>
 );
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').then((registration) => {
-      console.log('SW registered: ', registration);
-    }).catch((registrationError) => {
-      console.log('SW registration failed: ', registrationError);
-    });
-  });
-}

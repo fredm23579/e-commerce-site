@@ -2,8 +2,9 @@ const CACHE_NAME = 'e-commerce-site-cache-v1';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/public/',
-  '/public/images/',
+  '/offline.html',
+  '/public/icons/icon-192x192.png',
+  '/public/icons/icon-512x512.png',
   '/public/images/alphabet-blocks.jpg',
   '/public/images/bedtime-book.jpg',
   '/public/images/camera.jpg',
@@ -17,7 +18,6 @@ const urlsToCache = [
   '/public/images/toilet-paper.jpg',
   '/public/images/wooden-spoons.jpg',
   '/public/vite.svg',
-  '/public/icons/',
   '/public/index.html',
   '/public/manifest.json',
   '/src/main.jsx',
@@ -26,7 +26,7 @@ const urlsToCache = [
   '/src/components/Nav/index.jsx',
   '/src/components/Cart/index.jsx',
   '/src/components/Cart/style.jsx',
-  '/src/components/Carttem/index.jsx',
+  '/src/components/CartItem/index.jsx',
   '/src/components/CategoryMenu/index.jsx',
   '/src/components/DeleteBtn/index.jsx',
   '/src/components/Jumbotron/index.jsx',
@@ -44,16 +44,12 @@ const urlsToCache = [
   '/src/pages/Success.jsx',
   '/src/pages/OrderHistory.jsx',
   '/src/utils/auth.js',
-  '/src/utils/action.js',
+  '/src/utils/actions.js',
   '/src/utils/GlobalState.jsx',
   '/src/utils/helpers.js',
   '/src/utils/mutations.js',
   '/src/utils/queries.js',
   '/src/utils/reducers.js',
-  '/public/icons/icon-192x192.png',
-  '/public/icons/icon-512x512.png',
-  
-  // Add other resources you want to cache
 ];
 
 self.addEventListener('install', (event) => {
