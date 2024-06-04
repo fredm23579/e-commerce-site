@@ -50,6 +50,11 @@ const urlsToCache = [
   '/src/utils/mutations.js',
   '/src/utils/queries.js',
   '/src/utils/reducers.js',
+  '/icons/icon-192x192.png',
+  '/icons/icon-512x512.png',
+  '/icons/apple-touch-icon.png',
+  '/icons/favicon-32x32.png',
+  '/icons/favicon-16x16.png'
 ];
 
 self.addEventListener('install', (event) => {

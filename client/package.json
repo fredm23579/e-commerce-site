@@ -21,7 +21,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.11.2",
     "vitest": "^0.31.4",
-    "vite-plugin-pwa": "^0.14.7"  // Updated version for PWA functionality
+    "vite-plugin-pwa": "^0.14.7"  
   },
   "devDependencies": {
     "@types/react": "^18.0.37",
