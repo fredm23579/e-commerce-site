@@ -1,3 +1,4 @@
+// client/src/components/Nav/index.jsx
 import Auth from "../../utils/auth";
 import { Link } from "react-router-dom";
 
@@ -7,6 +8,16 @@ function Nav() {
     if (Auth.loggedIn()) {
       return (
         <ul className="flex-row">
+          <li className="mx-1">
+            <Link to="/wishlist">
+              Wishlist
+            </Link>
+          </li>
+          <li className="mx-1">
+            <Link to="/favorites">
+              Favorites
+            </Link>
+          </li>
           <li className="mx-1">
             <Link to="/orderHistory">
               Order History

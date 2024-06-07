@@ -26,6 +26,8 @@ const typeDefs = `
     lastName: String
     email: String
     orders: [Order]
+    wishlist: [Product]
+    favorites: [Product]
   }
 
   type Checkout {
@@ -61,6 +63,10 @@ const typeDefs = `
     updateUser(firstName: String, lastName: String, email: String, password: String): User
     updateProduct(_id: ID!, quantity: Int!): Product
     login(email: String!, password: String!): Auth
+    addToWishlist(productId: ID!): User
+    removeFromWishlist(productId: ID!): User
+    addToFavorites(productId: ID!): User
+    removeFromFavorites(productId: ID!): User
   }
 `;
 

@@ -14,6 +14,8 @@ export function idbPromise(storeName, method, object) {
       db.createObjectStore('products', { keyPath: '_id' });
       db.createObjectStore('categories', { keyPath: '_id' });
       db.createObjectStore('cart', { keyPath: '_id' });
+      db.createObjectStore('wishlist', { keyPath: '_id' });
+      db.createObjectStore('favorites', { keyPath: '_id' });
     };
 
     request.onerror = function(e) {
@@ -42,6 +44,7 @@ export function idbPromise(storeName, method, object) {
           break;
         case 'delete':
           store.delete(object._id);
+          resolve();
           break;
         default:
           console.log('No valid method');

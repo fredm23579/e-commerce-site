@@ -7,7 +7,11 @@ import {
   UPDATE_CATEGORIES,
   UPDATE_CURRENT_CATEGORY,
   CLEAR_CART,
-  TOGGLE_CART
+  TOGGLE_CART,
+  ADD_TO_WISHLIST,
+  REMOVE_FROM_WISHLIST,
+  ADD_TO_FAVORITES,
+  REMOVE_FROM_FAVORITES
 } from "./actions";
 
 export const reducer = (state, action) => {
@@ -77,7 +81,31 @@ export const reducer = (state, action) => {
       return {
         ...state,
         currentCategory: action.currentCategory
-      }
+      };
+
+    case ADD_TO_WISHLIST:
+      return {
+        ...state,
+        wishlist: [...state.wishlist, action.product]
+      };
+
+    case REMOVE_FROM_WISHLIST:
+      return {
+        ...state,
+        wishlist: state.wishlist.filter(product => product._id !== action._id)
+      };
+
+    case ADD_TO_FAVORITES:
+      return {
+        ...state,
+        favorites: [...state.favorites, action.product]
+      };
+
+    case REMOVE_FROM_FAVORITES:
+      return {
+        ...state,
+        favorites: state.favorites.filter(product => product._id !== action._id)
+      };
 
     default:
       return state;

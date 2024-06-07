@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer } from "react";
-import { reducer } from './reducers'
+import { reducer } from './reducers';
 
 const StoreContext = createContext();
 const { Provider } = StoreContext;
@@ -11,6 +11,8 @@ const StoreProvider = ({ value = [], ...props }) => {
     cartOpen: false,
     categories: [],
     currentCategory: '',
+    wishlist: [],      // Added wishlist to initial state
+    favorites: []      // Added favorites to initial state
   });
 
   return <Provider value={[state, dispatch]} {...props} />;

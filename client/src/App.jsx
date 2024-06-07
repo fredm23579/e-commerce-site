@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import {
   ApolloClient,
   InMemoryCache,
@@ -8,6 +8,15 @@ import {
 import { setContext } from '@apollo/client/link/context';
 
 import Nav from './components/Nav';
+import Home from './pages/Home';
+import Wishlist from './pages/Wishlist';
+import Favorites from './pages/Favorites';
+import OrderHistory from './pages/OrderHistory';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import NoMatch from './pages/NoMatch';
+import Success from './pages/Success';
+import Detail from './pages/Detail';
 import { StoreProvider } from './utils/GlobalState';
 
 const httpLink = createHttpLink({
@@ -32,10 +41,22 @@ const client = new ApolloClient({
 function App() {
   return (
     <ApolloProvider client={client}>
-      <StoreProvider>
-        <Nav />
-        <Outlet />
-      </StoreProvider>
+      <Router>
+        <StoreProvider>
+          <Nav />
+          <Switch>
+            <Route exact path="/" component={Home} />
+            <Route exact path="/wishlist" component={Wishlist} />
+            <Route exact path="/favorites" component={Favorites} />
+            <Route exact path="/orderHistory" component={OrderHistory} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/signup" component={Signup} />
+            <Route exact path="/success" component={Success} />
+            <Route exact path="/products/:id" component={Detail} />
+            <Route component={NoMatch} />
+          </Switch>
+        </StoreProvider>
+      </Router>
     </ApolloProvider>
   );
 }

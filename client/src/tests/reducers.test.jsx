@@ -8,7 +8,11 @@ import {
   UPDATE_CATEGORIES,
   UPDATE_CURRENT_CATEGORY,
   CLEAR_CART,
-  TOGGLE_CART
+  TOGGLE_CART,
+  ADD_TO_WISHLIST,
+  REMOVE_FROM_WISHLIST,
+  ADD_TO_FAVORITES,
+  REMOVE_FROM_FAVORITES
 } from '../utils/actions';
 
 const initialState = {
@@ -25,6 +29,8 @@ const initialState = {
       purchaseQuantity: 2
     }
   ],
+  wishlist: [],
+  favorites: [],
   cartOpen: false,
   categories: [{ name: 'Food' }],
   currentCategory: '1',
@@ -137,4 +143,52 @@ test('TOGGLE_CART', () => {
   });
 
   expect(newState2.cartOpen).toBe(false);
+});
+
+test('ADD_TO_WISHLIST', () => {
+  let newState = reducer(initialState, {
+    type: ADD_TO_WISHLIST,
+    product: { _id: '3', name: 'Milk' }
+  });
+
+  expect(newState.wishlist.length).toBe(1);
+  expect(newState.wishlist[0]._id).toBe('3');
+});
+
+test('REMOVE_FROM_WISHLIST', () => {
+  const stateWithWishlist = {
+    ...initialState,
+    wishlist: [{ _id: '3', name: 'Milk' }]
+  };
+
+  let newState = reducer(stateWithWishlist, {
+    type: REMOVE_FROM_WISHLIST,
+    _id: '3'
+  });
+
+  expect(newState.wishlist.length).toBe(0);
+});
+
+test('ADD_TO_FAVORITES', () => {
+  let newState = reducer(initialState, {
+    type: ADD_TO_FAVORITES,
+    product: { _id: '3', name: 'Milk' }
+  });
+
+  expect(newState.favorites.length).toBe(1);
+  expect(newState.favorites[0]._id).toBe('3');
+});
+
+test('REMOVE_FROM_FAVORITES', () => {
+  const stateWithFavorites = {
+    ...initialState,
+    favorites: [{ _id: '3', name: 'Milk' }]
+  };
+
+  let newState = reducer(stateWithFavorites, {
+    type: REMOVE_FROM_FAVORITES,
+    _id: '3'
+  });
+
+  expect(newState.favorites.length).toBe(0);
 });
