@@ -8,18 +8,22 @@ db.once('open', async () => {
   await cleanDB('User', 'users');
 
   const categories = await Category.insertMany([
-    { name: 'Food' },
-    { name: 'Household Supplies' },
-    { name: 'Electronics' },
-    { name: 'Books' },
-    { name: 'Toys' }
+    { name: 'Laboratory Equipment & Supplies' },
+    { name: 'Astronomy' },
+    { name: 'Biology & Life Sciences' },
+    { name: 'Chemistry' },
+    { name: 'Energy' },
+    { name: 'Geology' },
+    { name: 'Physics & Engineering' },
+    { name: 'Environmental & Earth Sciences' },
+    { name: 'Educational Resources' }
   ]);
 
   console.log('categories seeded');
 
   const products = await Product.insertMany([
     {
-      name: 'Tin of Cookies',
+      name: 'Digital Multimeter',
       description:
         'Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.',
       image: 'cookie-tin.jpg',
@@ -130,9 +134,9 @@ db.once('open', async () => {
   console.log('products seeded');
 
   await User.create({
-    firstName: 'Pamela',
-    lastName: 'Washington',
-    email: 'pamela@testmail.com',
+    firstName: 'Jeff',
+    lastName: 'Bezzoss',
+    email: 'Jeff@testmail.com',
     password: 'password12345',
     orders: [
       {
@@ -142,9 +146,9 @@ db.once('open', async () => {
   });
 
   await User.create({
-    firstName: 'Elijah',
+    firstName: 'Bob',
     lastName: 'Holt',
-    email: 'eholt@testmail.com',
+    email: 'bholt@testmail.com',
     password: 'password12345'
   });
 

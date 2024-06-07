@@ -1,16 +1,16 @@
 {
-  "name": "mern-server",
+  "name": "store-mern-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "A MERN E-Commerce site with payments and login/sign-up portal",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "watch": "nodemon",
     "seed": "node config/seeds.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["mogoBD", "React", "GraphQL", "JWT", "stripe", "express", "bcrypt", "mongoose"],
+  "author": "Fred Motta",
+  "license": "MIT",
   "dependencies": {
     "@apollo/server": "^4.7.2",
     "bcrypt": "^4.0.1",
