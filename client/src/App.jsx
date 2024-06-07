@@ -1,4 +1,6 @@
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+// client/src/App.jsx
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import {
   ApolloClient,
   InMemoryCache,
@@ -8,16 +10,16 @@ import {
 import { setContext } from '@apollo/client/link/context';
 
 import Nav from './components/Nav';
+import { StoreProvider } from './utils/GlobalState';
 import Home from './pages/Home';
-import Wishlist from './pages/Wishlist';
-import Favorites from './pages/Favorites';
-import OrderHistory from './pages/OrderHistory';
+import Detail from './pages/Detail';
+import NoMatch from './pages/NoMatch';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
-import NoMatch from './pages/NoMatch';
+import OrderHistory from './pages/OrderHistory';
+import Wishlist from './pages/Wishlist';
+import Favorites from './pages/Favorites';
 import Success from './pages/Success';
-import Detail from './pages/Detail';
-import { StoreProvider } from './utils/GlobalState';
 
 const httpLink = createHttpLink({
   uri: '/graphql',
@@ -42,20 +44,22 @@ function App() {
   return (
     <ApolloProvider client={client}>
       <Router>
-        <StoreProvider>
-          <Nav />
-          <Switch>
-            <Route exact path="/" component={Home} />
-            <Route exact path="/wishlist" component={Wishlist} />
-            <Route exact path="/favorites" component={Favorites} />
-            <Route exact path="/orderHistory" component={OrderHistory} />
-            <Route exact path="/login" component={Login} />
-            <Route exact path="/signup" component={Signup} />
-            <Route exact path="/success" component={Success} />
-            <Route exact path="/products/:id" component={Detail} />
-            <Route component={NoMatch} />
-          </Switch>
-        </StoreProvider>
+        <div>
+          <StoreProvider>
+            <Nav />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/orderHistory" element={<OrderHistory />} />
+              <Route path="/wishlist" element={<Wishlist />} />
+              <Route path="/favorites" element={<Favorites />} />
+              <Route path="/success" element={<Success />} />
+              <Route path="/products/:id" element={<Detail />} />
+              <Route path="*" element={<NoMatch />} />
+            </Routes>
+          </StoreProvider>
+        </div>
       </Router>
     </ApolloProvider>
   );

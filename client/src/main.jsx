@@ -1,5 +1,5 @@
-import ReactDOM from 'react-dom/client'
-import './index.css'
+import ReactDOM from 'react-dom/client';
+import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import App from './App.jsx';
@@ -10,6 +10,8 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Success from './pages/Success';
 import OrderHistory from './pages/OrderHistory';
+import Wishlist from './pages/Wishlist';
+import Favorites from './pages/Favorites';
 
 const router = createBrowserRouter([
   {
@@ -20,20 +22,33 @@ const router = createBrowserRouter([
       {
         index: true, 
         element: <Home />
-      }, {
-        path: '/login',
+      },
+      {
+        path: 'login',
         element: <Login />
-      }, {
-        path: '/signup',
+      },
+      {
+        path: 'signup',
         element: <Signup />
-      }, {
-        path: '/success',
+      },
+      {
+        path: 'success',
         element: <Success />
-      }, {
-        path: '/orderHistory',
+      },
+      {
+        path: 'orderHistory',
         element: <OrderHistory />
-      }, {
-        path: '/products/:id',
+      },
+      {
+        path: 'wishlist',
+        element: <Wishlist />
+      },
+      {
+        path: 'favorites',
+        element: <Favorites />
+      },
+      {
+        path: 'products/:id',
         element: <Detail />
       }
     ]
@@ -42,4 +57,4 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <RouterProvider router={router} />
-)
+);

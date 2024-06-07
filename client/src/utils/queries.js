@@ -1,3 +1,4 @@
+// client/src/utils/queries.js
 import { gql } from '@apollo/client';
 
 export const QUERY_PRODUCTS = gql`
@@ -65,28 +66,32 @@ export const QUERY_USER = gql`
           image
         }
       }
-      wishlist {
-        _id
-        name
-        description
-        price
-        quantity
-        image
-        category {
-          name
-        }
-      }
-      favorites {
-        _id
-        name
-        description
-        price
-        quantity
-        image
-        category {
-          name
-        }
-      }
+    }
+  }
+`;
+
+export const QUERY_WISHLIST = gql`
+  {
+    wishlist {
+      _id
+      name
+      description
+      price
+      quantity
+      image
+    }
+  }
+`;
+
+export const QUERY_FAVORITES = gql`
+  {
+    favorites {
+      _id
+      name
+      description
+      price
+      quantity
+      image
     }
   }
 `;
