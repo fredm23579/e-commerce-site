@@ -1,6 +1,6 @@
 // client/src/App.jsx
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import {
   ApolloClient,
   InMemoryCache,
@@ -22,7 +22,7 @@ import Favorites from './pages/Favorites';
 import Success from './pages/Success';
 
 const httpLink = createHttpLink({
-  uri: '/graphql',
+  uri: 'http://localhost:3001/graphql',
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -43,24 +43,20 @@ const client = new ApolloClient({
 function App() {
   return (
     <ApolloProvider client={client}>
-      <Router>
-        <div>
-          <StoreProvider>
-            <Nav />
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/orderHistory" element={<OrderHistory />} />
-              <Route path="/wishlist" element={<Wishlist />} />
-              <Route path="/favorites" element={<Favorites />} />
-              <Route path="/success" element={<Success />} />
-              <Route path="/products/:id" element={<Detail />} />
-              <Route path="*" element={<NoMatch />} />
-            </Routes>
-          </StoreProvider>
-        </div>
-      </Router>
+      <StoreProvider>
+        <Nav />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/orderHistory" element={<OrderHistory />} />
+          <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/favorites" element={<Favorites />} />
+          <Route path="/success" element={<Success />} />
+          <Route path="/products/:id" element={<Detail />} />
+          <Route path="*" element={<NoMatch />} />
+        </Routes>
+      </StoreProvider>
     </ApolloProvider>
   );
 }

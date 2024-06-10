@@ -10,7 +10,7 @@ const Wishlist = () => {
   const [state, dispatch] = useStoreContext();
 
   useEffect(() => {
-    if (data) {
+    if (data && data.wishlist) {
       dispatch({ type: "UPDATE_WISHLIST", wishlist: data.wishlist });
       data.wishlist.forEach((item) => {
         idbPromise("wishlist", "put", item);
@@ -25,7 +25,7 @@ const Wishlist = () => {
   return (
     <div>
       <h2>My Wishlist</h2>
-      {state.wishlist.length ? (
+      {state.wishlist && state.wishlist.length ? (
         <div>
           {state.wishlist.map((item) => (
             <div key={item._id}>

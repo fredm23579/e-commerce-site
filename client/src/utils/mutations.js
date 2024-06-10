@@ -58,12 +58,9 @@ export const ADD_TO_WISHLIST = gql`
         _id
         name
         description
-        image
-        quantity
         price
-        category {
-          name
-        }
+        quantity
+        image
       }
     }
   }
@@ -77,12 +74,9 @@ export const REMOVE_FROM_WISHLIST = gql`
         _id
         name
         description
-        image
-        quantity
         price
-        category {
-          name
-        }
+        quantity
+        image
       }
     }
   }
@@ -96,12 +90,9 @@ export const ADD_TO_FAVORITES = gql`
         _id
         name
         description
-        image
-        quantity
         price
-        category {
-          name
-        }
+        quantity
+        image
       }
     }
   }
@@ -109,18 +100,15 @@ export const ADD_TO_FAVORITES = gql`
 
 export const REMOVE_FROM_FAVORITES = gql`
   mutation removeFromFavorites($productId: ID!) {
-    removeFromFavorites($productId: $productId) {
+    removeFromFavorites(productId: $productId) {
       _id
       favorites {
         _id
         name
         description
-        image
-        quantity
         price
-        category {
-          name
-        }
+        quantity
+        image
       }
     }
   }

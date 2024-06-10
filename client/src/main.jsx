@@ -1,60 +1,41 @@
+// client/src/main.jsx
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  createHttpLink,
+} from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 
-import App from './App.jsx';
-import Home from './pages/Home';
-import Detail from './pages/Detail';
-import NoMatch from './pages/NoMatch';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import Success from './pages/Success';
-import OrderHistory from './pages/OrderHistory';
-import Wishlist from './pages/Wishlist';
-import Favorites from './pages/Favorites';
+import App from './App';
 
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <App />,
-    error: <NoMatch />,
-    children: [
-      {
-        index: true, 
-        element: <Home />
-      },
-      {
-        path: 'login',
-        element: <Login />
-      },
-      {
-        path: 'signup',
-        element: <Signup />
-      },
-      {
-        path: 'success',
-        element: <Success />
-      },
-      {
-        path: 'orderHistory',
-        element: <OrderHistory />
-      },
-      {
-        path: 'wishlist',
-        element: <Wishlist />
-      },
-      {
-        path: 'favorites',
-        element: <Favorites />
-      },
-      {
-        path: 'products/:id',
-        element: <Detail />
-      }
-    ]
-  }
-]);
+const httpLink = createHttpLink({
+  uri: 'http://localhost:3001/graphql',
+});
+
+const authLink = setContext((_, { headers }) => {
+  const token = localStorage.getItem('id_token');
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : '',
+    },
+  };
+});
+
+const client = new ApolloClient({
+  link: authLink.concat(httpLink),
+  cache: new InMemoryCache(),
+});
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <RouterProvider router={router} />
+  <ApolloProvider client={client}>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </ApolloProvider>
 );

@@ -25,7 +25,7 @@ const Favorites = () => {
           {favorites.map((item) => (
             <div key={item._id} className="card px-1 py-1">
               <Link to={`/products/${item._id}`}>
-                <img alt={item.name} src={`/images/${item.image}`} />
+                <img src={`/images/${item.image}`} alt={item.name} />
                 <p>{item.name}</p>
               </Link>
               <div>
