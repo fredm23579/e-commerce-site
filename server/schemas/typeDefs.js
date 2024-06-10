@@ -55,6 +55,8 @@ const typeDefs = `
     user: User
     order(_id: ID!): Order
     checkout(products: [ProductInput]): Checkout
+    wishlist: [Product]
+    favorites: [Product]
   }
 
   type Mutation {
