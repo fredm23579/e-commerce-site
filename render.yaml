@@ -1,0 +1,11 @@
+# Exported from Render on 2024-06-11T23:18:04Z
+services:
+- type: web
+  name: e-commerce-site
+  runtime: static
+  repo: https://github.com/fredm23579/e-commerce-site
+  branch: works
+  buildCommand: npm run build
+  staticPublishPath: client/dist
+  pullRequestPreviewsEnabled: true
+version: "1"
