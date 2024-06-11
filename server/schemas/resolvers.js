@@ -17,7 +17,8 @@ const resolvers = {
 
       if (name) {
         params.name = {
-          $regex: name
+          $regex: name,
+          $options: 'i'
         };
       }
 
@@ -28,10 +29,13 @@ const resolvers = {
     },
     user: async (parent, args, context) => {
       if (context.user) {
-        const user = await User.findById(context.user._id).populate({
-          path: 'orders.products',
-          populate: 'category'
-        }).populate('wishlist').populate('favorites');
+        const user = await User.findById(context.user._id)
+          .populate({
+            path: 'orders.products',
+            populate: 'category'
+          })
+          .populate('wishlist')
+          .populate('favorites');
 
         user.orders.sort((a, b) => b.purchaseDate - a.purchaseDate);
 
@@ -52,21 +56,22 @@ const resolvers = {
 
       throw new AuthenticationError('Not logged in');
     },
-    checkout: async (parent, args, context) => {
+    checkout: async (parent, { products }, context) => {
       const url = new URL(context.headers.referer).origin;
-      await Order.create({ products: args.products.map(({ _id }) => _id) });
       const line_items = [];
 
-      for (const product of args.products) {
+      for (const product of products) {
+        const dbProduct = await Product.findById(product._id);
+
         line_items.push({
           price_data: {
             currency: 'usd',
             product_data: {
-              name: product.name,
-              description: product.description,
-              images: [`${url}/images/${product.image}`]
+              name: dbProduct.name,
+              description: dbProduct.description,
+              images: [`${url}/images/${dbProduct.image}`]
             },
-            unit_amount: product.price * 100,
+            unit_amount: dbProduct.price * 100,
           },
           quantity: product.purchaseQuantity,
         });

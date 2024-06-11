@@ -8,6 +8,11 @@ db.once('open', async () => {
   await cleanDB('User', 'users');
 
   const categories = await Category.insertMany([
+    { name: 'Food' },
+    { name: 'Household Supplies' },
+    { name: 'Electronics' },
+    { name: 'Books' },
+    { name: 'Toys' },
     { name: 'Laboratory Equipment & Supplies' },
     { name: 'Astronomy' },
     { name: 'Biology & Life Sciences' },
@@ -26,8 +31,8 @@ db.once('open', async () => {
       name: 'Digital Multimeter',
       description:
         'Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.',
-      image: 'cookie-tin.jpg',
-      category: categories[0]._id,
+      image: 'multimeter.jpg',
+      category: categories[5]._id,
       price: 2.99,
       quantity: 500
     },
@@ -128,6 +133,78 @@ db.once('open', async () => {
       image: 'alphabet-blocks.jpg',
       price: 9.99,
       quantity: 600
+    },
+    {
+      name: 'Telescope',
+      description:
+        'Advanced telescope with high-resolution optics for astronomy enthusiasts.',
+      image: 'telescope.jpg',
+      category: categories[6]._id,
+      price: 299.99,
+      quantity: 50
+    },
+    {
+      name: 'Microscope',
+      description:
+        'High-quality microscope suitable for biology and life sciences.',
+      image: 'microscope.jpg',
+      category: categories[7]._id,
+      price: 199.99,
+      quantity: 30
+    },
+    {
+      name: 'Chemical Reagents Set',
+      description:
+        'A complete set of chemical reagents for educational and research purposes.',
+      image: 'reagents.jpg',
+      category: categories[8]._id,
+      price: 79.99,
+      quantity: 200
+    },
+    {
+      name: 'Solar Panel Kit',
+      description:
+        'Efficient solar panel kit for energy experiments and projects.',
+      image: 'solarkit.jpg',
+      category: categories[9]._id,
+      price: 499.99,
+      quantity: 15
+    },
+    {
+      name: 'Rock Collection Kit',
+      description:
+        'Comprehensive rock collection kit for geology enthusiasts.',
+      image: 'rock-kit-lg.jpg',
+      category: categories[10]._id,
+      price: 29.99,
+      quantity: 100
+    },
+    {
+      name: 'Physics Experiment Kit',
+      description:
+        'A versatile kit for various physics experiments and demonstrations.',
+      image: 'physicslabkit.jpg',
+      category: categories[11]._id,
+      price: 99.99,
+      quantity: 75
+    },
+    {
+      name: 'Environmental Science Kit',
+      description:
+        'An engaging kit for environmental and earth sciences studies.',
+      image: 'environmentalsciencekit.jpg',
+      category: categories[12]._id,
+      price: 59.99,
+      quantity: 120
+    },
+    {
+      name: 'Educational Posters',
+      description:
+        'Set of educational posters covering various scientific topics.',
+      image: 'scienceposter.jpg',
+      category: categories[13]._id,
+      price: 19.99,
+      quantity: 300
     }
   ]);
 
