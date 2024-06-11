@@ -47,13 +47,13 @@ function App() {
         <Nav />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/orderHistory" element={<OrderHistory />} />
-          <Route path="/wishlist" element={<Wishlist />} />
-          <Route path="/favorites" element={<Favorites />} />
-          <Route path="/success" element={<Success />} />
-          <Route path="/products/:id" element={<Detail />} />
+          <Route path="/Login" element={<Login />} />
+          <Route path="/Signup" element={<Signup />} />
+          <Route path="/OrderHistory" element={<OrderHistory />} />
+          <Route path="/Wishlist" element={<Wishlist />} />
+          <Route path="/Favorites" element={<Favorites />} />
+          <Route path="/Success" element={<Success />} />
+          <Route path="/Products/:id" element={<Detail />} />
           <Route path="*" element={<NoMatch />} />
         </Routes>
       </StoreProvider>
