@@ -1,9 +1,9 @@
 // client/src/pages/Wishlist.jsx
 import React from 'react';
-import { useStoreContext } from '../utils/GlobalState';
+import { useStoreContext } from '../../utils/GlobalState';
 import { Link } from 'react-router-dom';
-import { REMOVE_FROM_WISHLIST } from '../utils/actions';
-import { idbPromise } from '../utils/helpers';
+import { REMOVE_FROM_WISHLIST } from '../../utils/actions';
+import { idbPromise } from '../../utils/helpers';
 
 const Wishlist = () => {
   const [state, dispatch] = useStoreContext();

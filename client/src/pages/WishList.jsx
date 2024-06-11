@@ -40,5 +40,4 @@ const Wishlist = () => {
     </div>
   );
 };
-
 export default Wishlist;

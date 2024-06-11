@@ -17,9 +17,9 @@ import NoMatch from './pages/NoMatch';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import OrderHistory from './pages/OrderHistory';
-import Wishlist from './pages/Wishlist';
-import Favorites from './pages/Favorites';
+import Favorites from './pages/Favorites'; 
 import Success from './pages/Success';
+import Wishlist from './pages/Wishlist';
 
 const httpLink = createHttpLink({
   uri: 'http://localhost:3001/graphql',
