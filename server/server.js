@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const { ApolloServer } = require('@apollo/server');
 const { expressMiddleware } = require('@apollo/server/express4');
@@ -6,7 +7,7 @@ const { authMiddleware } = require('./utils/auth');
 const { typeDefs, resolvers } = require('./schemas');
 const db = require('./config/connection');
 const cors = require('cors');
-const stripe = require('stripe')('pk_test_TYooMQauvdEDq54NiTphI7jx');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -49,15 +50,20 @@ const startApolloServer = async () => {
       quantity: product.purchaseQuantity,
     }));
 
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items,
-      mode: 'payment',
-      success_url: `${req.protocol}://${req.get('host')}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.protocol}://${req.get('host')}/`,
-    });
+    try {
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items,
+        mode: 'payment',
+        success_url: `${req.protocol}://${req.get('host')}/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${req.protocol}://${req.get('host')}/`,
+      });
 
-    res.json({ id: session.id });
+      res.json({ id: session.id });
+    } catch (error) {
+      console.error('Error creating Stripe checkout session:', error);
+      res.status(500).json({ error: 'An error occurred, unable to create session' });
+    }
   });
 
   if (process.env.NODE_ENV === 'production') {
