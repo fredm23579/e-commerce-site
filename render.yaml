@@ -5,7 +5,7 @@ services:
   runtime: static
   repo: https://github.com/fredm23579/e-commerce-site
   branch: works
-  buildCommand: npm run build
-  staticPublishPath: client/dist
+  buildCommand: npm run render-build
+  staticPublishPath: dist
   pullRequestPreviewsEnabled: true
 version: "1"

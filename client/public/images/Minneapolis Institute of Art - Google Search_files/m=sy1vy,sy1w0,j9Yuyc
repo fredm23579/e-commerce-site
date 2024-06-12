@@ -1,0 +1,21 @@
+this._s=this._s||{};(function(_){var window=this;
+try{
+_.Ye(_.PXa);
+}catch(e){_._DumpException(e)}
+try{
+_.nYe=function(a){this.Ia=_.n(a)};_.F(_.nYe,_.p);_.k=_.nYe.prototype;_.k.yr=function(){return _.Sc(this,1)};_.k.BWe=function(){return _.Sc(this,1)};_.k.getLatitude=function(){return _.oh(this,2)};_.k.xWe=function(){return _.oh(this,2)};_.k.wWe=function(){return _.yi(this,2)};_.k.getLongitude=function(){return _.oh(this,3)};_.k.zWe=function(){return _.oh(this,3)};_.k.yWe=function(){return _.yi(this,3)};_.k.sWe=function(){return _.oh(this,4)};_.k.uWe=function(){return _.oh(this,5)};
+_.k.tWe=function(){return _.oh(this,6)};_.k.vWe=function(){return _.oh(this,7)};_.k.AWe=function(){return _.oh(this,8)};_.k.setSpeed=function(a){return _.Wi(this,8,a)};_.oYe=function(a){this.Ia=_.n(a)};_.F(_.oYe,_.p);_.oYe.prototype.ka=function(){return _.Qh(this,4)};_.oYe.prototype.oa=function(){return _.Qh(this,4)};_.oYe.prototype.Ba=function(){return _.rj(this,4)};
+}catch(e){_._DumpException(e)}
+try{
+_.z("j9Yuyc");
+var EYe=function(a,b){switch(a.code){case 1:var c="permission_denied";break;case 2:c="location_unavailable";break;case 3:c="location_timeout";break;default:c="unknown_error"}a=new _.ed(c,a.message);_.lg({serviceName:"g",methodName:b},a);return a},FYe=function(){var a=new _.ed("feature_not_enabled","HTML5 geolocation permissions API missing.");_.lg({serviceName:"g",methodName:"getGeolocationPermissionState"},a);return a},GYe=function(a){var b=new _.ed("feature_not_enabled","HTML5 geolocation API missing.");
+_.lg({serviceName:"g",methodName:a},b);return b},HYe=function(a){var b,c;return _.Eg(function(d){b=new _.oYe;switch(a.state){case "granted":return _.$i(b,4,1),d.return(b);case "denied":return _.$i(b,4,2),d.return(b);case "prompt":return _.$i(b,4,3),d.return(b);default:return c=new _.ed("unknown_error","Invalid permission state '"+a.state+"'."),_.lg({serviceName:"g",methodName:"getGeolocationPermissionState"},c),d.return(Promise.reject(c))}})};var IYe=function(a){_.Dn.call(this,a.La)};_.F(IYe,_.Dn);IYe.nb=_.Dn.nb;IYe.Ha=_.Dn.Ha;_.k=IYe.prototype;_.k.isAvailable=function(){return!(!navigator||!navigator.geolocation)};_.k.rva=function(){return!0};_.k.tva=function(){var a,b;return!!((a=navigator)==null?0:(b=a.permissions)==null?0:b.query)};
+_.k.getCurrentLocation=function(){_.ig({serviceName:"g",methodName:"gcl"});return this.isAvailable()?new Promise(function(a,b){navigator.geolocation.getCurrentPosition(a,function(c){b(EYe(c,"gcl"))})}):Promise.reject(GYe("gcl"))};
+_.k.D5a=function(){var a=this;return _.Eg(function(b){_.ig({serviceName:"g",methodName:"getCurrentLocationWithOptions"});return a.isAvailable()&&a.rva()?b.return(new Promise(function(c,d){navigator.geolocation.getCurrentPosition(function(e){if(e.timestamp==null||e.coords==null)var f=null;else{f=new _.nYe;f=_.Af(f,1,e.timestamp);e=e.coords;var g=_.Wi(f,2,e.latitude);g=_.Wi(g,3,e.longitude);_.Wi(g,4,e.accuracy);e.altitude!=null&&_.Wi(f,5,e.altitude);e.altitudeAccuracy!=null&&_.Wi(f,6,e.altitudeAccuracy);
+e.speed!=null&&f.setSpeed(e.speed);e.heading!=null&&_.Wi(f,7,e.heading)}f?c(f):(f=new _.ed("unknown_error","Could not get geolocation information"),_.lg({serviceName:"g",methodName:"getCurrentLocationWithOptions"},f),d(f))},function(e){d(EYe(e,"getCurrentLocationWithOptions"))})})):b.return(Promise.reject(GYe("getCurrentLocationWithOptions")))})};
+_.k.O5a=function(){var a=this,b,c;return _.Eg(function(d){if(d.ka==1){_.ig({serviceName:"g",methodName:"getGeolocationPermissionState"});if(!a.isAvailable()||!a.tva())return d.return(Promise.reject(FYe()));_.wg(d,2);return d.yield(navigator.permissions.query({name:"geolocation"}),4)}if(d.ka!=2)return b=d.oa,d.return(HYe(b));c=_.zg(d);if(c instanceof TypeError)d=d.return(Promise.reject(FYe()));else{var e=d.return,f=Promise,g=f.reject,h=new _.ed("unknown_error",(c==null?void 0:c.message)||"Could not get geolocation permission information.");
+_.lg({serviceName:"g",methodName:"getGeolocationPermissionState"},h);d=e.call(d,g.call(f,h))}return d})};_.Fn(_.h6a,IYe);
+_.A();
+}catch(e){_._DumpException(e)}
+})(this._s);
+// Google Inc.
