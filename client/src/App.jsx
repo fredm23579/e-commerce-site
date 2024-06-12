@@ -19,7 +19,7 @@ import Signup from './pages/Signup';
 import OrderHistory from './pages/OrderHistory';
 import Favorites from './pages/Favorites'; 
 import Success from './pages/Success';
-import Wishlist from './pages/Wishlist';
+//import Wishlist from './pages/Wishlist'; <Route path="/Wishlist" element={<Wishlist />} />
 
 const httpLink = createHttpLink({
   uri: 'http://localhost:3001/graphql',
@@ -50,7 +50,6 @@ function App() {
           <Route path="/Login" element={<Login />} />
           <Route path="/Signup" element={<Signup />} />
           <Route path="/OrderHistory" element={<OrderHistory />} />
-          <Route path="/Wishlist" element={<Wishlist />} />
           <Route path="/Favorites" element={<Favorites />} />
           <Route path="/Success" element={<Success />} />
           <Route path="/Products/:id" element={<Detail />} />
