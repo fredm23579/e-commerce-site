@@ -4,7 +4,7 @@
   "description": "A MERN E-Commerce site with payments and login/sign-up portal",
   "main": "server/server.js",
   "scripts": {
-    "start": "node server/server.js",
+    "start": "concurrently \"nodemon server/server.js\" \"npm run dev --prefix client\"",
     "watch": "nodemon",
     "seed": "node server/config/seeds.js",
     "render-build": "npm install && npm run seed && npm install --prefix client && npm run build --prefix client"
@@ -16,13 +16,13 @@
     "@apollo/server": "^4.7.2",
     "apollo-server-express": "^3.13.0",
     "bcrypt": "^5.0.1",
+    "concurrently": "^7.6.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.19.2",
     "graphql": "^16.8.1",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.4.1",
-    "nodemon": "^2.0.2"
+    "mongoose": "^8.4.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.2"
