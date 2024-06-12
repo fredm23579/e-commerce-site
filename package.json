@@ -1,5 +1,5 @@
 {
-  "name": "online-store",
+  "name": "e-commerce-site",
   "version": "1.0.0",
   "description": "A MERN E-Commerce site with payments and login/sign-up portal",
   "main": "server/server.js",
@@ -8,7 +8,7 @@
     "watch": "nodemon server/server.js",
     "seed": "cd server && npm run seed",
     "dev": "concurrently \"cd server && npm run watch\" \"cd client && npm run dev\"",
-    "build": "cd client && npm run build",
+    "build": "cd client && npm install && npm run build",
     "render-build": "npm install && npm run seed && npm run build",
     "render-start": "node server/server.js"
   },
