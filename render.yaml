@@ -1,11 +1,17 @@
-# Exported from Render on 2024-06-11T23:18:04Z
 services:
 - type: web
   name: e-commerce-site
+  env: node
   runtime: static
   repo: https://github.com/fredm23579/e-commerce-site
   branch: works
   buildCommand: npm run render-build
+  startCommand: npm run start
   staticPublishPath: dist
   pullRequestPreviewsEnabled: true
+  envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        value: mongodb+srv://motta:baFi5HJmumvX4NtL@cluster0.gdbtbna.mongodb.net/cleanDB?retryWrites=true&w=majority
 version: "1"
