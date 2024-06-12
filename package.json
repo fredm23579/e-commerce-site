@@ -2,33 +2,33 @@
   "name": "e-commerce-site",
   "version": "1.0.0",
   "description": "A MERN E-Commerce site with payments and login/sign-up portal",
-  "main": "server/server.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node server/server.js",
-    "watch": "nodemon server/server.js",
-    "seed": "cd server && npm run seed",
-    "dev": "concurrently \"cd server && npm run watch\" \"cd client && npm run dev\"",
-    "build": "cd client && npm install && npm run build",
+    "start": "node server.js",
+    "watch": "nodemon",
+    "seed": "cd server && node config/seeds.js",
     "render-build": "npm install && npm run seed && npm run build",
-    "render-start": "node server/server.js"
+    "render-start": "node server.js"
   },
-  "keywords": [
-    "MongoDB",
-    "React",
-    "GraphQL",
-    "JWT",
-    "Stripe",
-    "Express",
-    "bcrypt",
-    "Mongoose"
-  ],
+  "keywords": ["MongoDB", "React", "GraphQL", "JWT", "Stripe", "Express", "bcrypt", "Mongoose"],
   "author": "Fred Motta",
   "license": "MIT",
   "dependencies": {
-    "concurrently": "^8.2.0"
+    "dotenv": "^16.0.0",  
+    "@apollo/server": "^4.7.2",
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "stripe": "^8.67.0",
+    "@apollo/client": "^3.10.4",
+    "apollo-server-express": "^3.13.0",
+    "express": "^4.19.2",
+    "graphql": "^16.8.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.4.1",
+    "react-router-dom": "^6.23.1",
+    "react-stripe-js": "^1.1.5"
   },
-  "devDependencies": {},
-  "engines": {
-    "node": ">=14.0.0"
+  "devDependencies": {
+    "nodemon": "^2.0.2"
   }
 }
