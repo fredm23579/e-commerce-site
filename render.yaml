@@ -1,15 +1,15 @@
 services:
-- type: web
-  name: e-commerce-site
-  env: node
-  runtime: static
-  repo: https://github.com/fredm23579/e-commerce-site
-  branch: works
-  buildCommand: npm run render-build
-  startCommand: npm run start
-  staticPublishPath: dist
-  pullRequestPreviewsEnabled: true
-  envVars:
+  - type: web
+    name: e-commerce-site
+    env: node
+    runtime: static
+    repo: https://github.com/fredm23579/e-commerce-site
+    branch: works
+    buildCommand: npm run render-build
+    startCommand: npm start
+    staticPublishPath: client/dist
+    pullRequestPreviewsEnabled: true
+    envVars:
       - key: NODE_ENV
         value: production
       - key: MONGODB_URI
