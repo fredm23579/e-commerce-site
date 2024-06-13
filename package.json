@@ -4,7 +4,7 @@
   "description": "A MERN E-Commerce site with payments and login/sign-up portal",
   "main": "server/server.js",
   "scripts": {
-    "start": "concurrently \"nodemon server/server.js\" \"npm run dev --prefix client\"",
+    "start": "node server/server.js",
     "watch": "nodemon",
     "seed": "node server/config/seeds.js",
     "render-build": "npm install && npm run seed && npm install --prefix client && npm run build --prefix client"

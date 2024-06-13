@@ -6,7 +6,7 @@ services:
     repo: https://github.com/fredm23579/e-commerce-site
     branch: works
     buildCommand: npm run render-build
-    startCommand: npm start
+    startCommand: npm run start
     staticPublishPath: client/dist
     pullRequestPreviewsEnabled: true
     envVars:
