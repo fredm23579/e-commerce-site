@@ -1,17 +1,25 @@
 services:
-  - type: web
-    name: e-commerce-site
-    env: node
-    runtime: static
-    repo: https://github.com/fredm23579/e-commerce-site
-    branch: works
-    buildCommand: npm run render-build
-    startCommand: npm run start
-    staticPublishPath: client/dist
-    pullRequestPreviewsEnabled: true
-    envVars:
+- type: web
+  name: e-commerce-site
+  env: node
+  runtime: static
+  repo: https://github.com/fredm23579/e-commerce-site
+  branch: works
+  buildCommand: npm run render-build
+  startCommand: npm start
+  staticPublishPath: client/dist
+  pullRequestPreviewsEnabled: true
+  envVars:
       - key: NODE_ENV
         value: production
       - key: MONGODB_URI
         value: mongodb+srv://motta:baFi5HJmumvX4NtL@cluster0.gdbtbna.mongodb.net/cleanDB?retryWrites=true&w=majority
+      - key: JWT_SECRET
+        value: secret
+      - key: JWT_EXPIRE
+        value: 3600
+      - key: STRIPE_KEY
+        value: sk_test_4eC39HqLyjWDarjtT1zdp7dc
+      - key: STRIPE_SECRET
+        value: sk_test_4eC39HqLyjWDarjtT1zdp7dc
 version: "1"

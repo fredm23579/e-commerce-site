@@ -19,6 +19,7 @@ import Signup from './pages/Signup';
 import OrderHistory from './pages/OrderHistory';
 import Favorites from './pages/Favorites'; 
 import Success from './pages/Success';
+
 //import Wishlist from './pages/Wishlist'; <Route path="/Wishlist" element={<Wishlist />} />
 
 const httpLink = createHttpLink({
