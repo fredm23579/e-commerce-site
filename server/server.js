@@ -1,13 +1,16 @@
 require('dotenv').config();
-const express = require('express');
-const { ApolloServer } = require('@apollo/server');
-const { expressMiddleware } = require('@apollo/server/express4');
-const path = require('path');
-const { authMiddleware } = require('./utils/auth');
-const { typeDefs, resolvers } = require('./schemas');
-const db = require('./config/connection');
-const cors = require('cors');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+import 'dotenv/config';
+import express from 'express';
+import { ApolloServer } from '@apollo/server';
+import { expressMiddleware } from '@apollo/server/express4';
+import path from 'path';
+import { authMiddleware } from './utils/auth.js';
+import { typeDefs, resolvers } from './schemas/index.js';
+import db from './config/connection.js';
+import cors from 'cors';
+import stripePackage from 'stripe';
+
+const stripe = stripePackage(process.env.STRIPE_SECRET_KEY);
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -20,7 +23,7 @@ const startApolloServer = async () => {
   await server.start();
 
   app.use(cors({
-    origin: 'http://localhost:3000', 
+    origin: 'http://localhost:3000',
     credentials: true,
   }));
 
