@@ -1,49 +1,82 @@
 // client/src/pages/Wishlist.jsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useStoreContext } from '../../utils/GlobalState';
 import { Link } from 'react-router-dom';
-import { REMOVE_FROM_WISHLIST } from '../../utils/actions';
+import { REMOVE_FROM_WISHLIST, ADD_TO_CART, UPDATE_CART_QUANTITY } from '../../utils/actions';
 import { idbPromise } from '../../utils/helpers';
+import { Alert, Container, Row, Col, Card, Button } from 'react-bootstrap'; // Using React Bootstrap for styling
+import Auth from '../../utils/auth'; // Import authentication utility
 
 const Wishlist = () => {
   const [state, dispatch] = useStoreContext();
   const { wishlist } = state;
 
-  const removeFromWishlist = (id) => {
-    dispatch({
-      type: REMOVE_FROM_WISHLIST,
-      _id: id,
-    });
-    idbPromise('wishlist', 'delete', { _id: id });
+  const removeFromWishlist = async (item) => {
+    try {
+      dispatch({ type: REMOVE_FROM_WISHLIST, _id: item._id });
+      await idbPromise('wishlist', 'delete', { _id: item._id });
+      Alert.success(`${item.name} removed from wishlist!`, 3000); 
+    } catch (error) {
+      console.error(error);
+      Alert.error('Failed to remove item from wishlist.'); 
+    }
+  };
+
+  const addToCart = (item) => {
+    // Check if the item is already in the cart
+    const cartItem = state.cart.find((cartItem) => cartItem._id === item._id);
+    if (cartItem) {
+      // Update cart quantity if it's already in the cart
+      dispatch({
+        type: UPDATE_CART_QUANTITY,
+        _id: item._id,
+        purchaseQuantity: parseInt(cartItem.purchaseQuantity) + 1,
+      });
+      idbPromise('cart', 'put', {
+        ...cartItem,
+        purchaseQuantity: parseInt(cartItem.purchaseQuantity) + 1,
+      });
+    } else {
+      // Add to cart if it's not already there
+      dispatch({
+        type: ADD_TO_CART,
+        product: { ...item, purchaseQuantity: 1 },
+      });
+      idbPromise('cart', 'put', { ...item, purchaseQuantity: 1 });
+    }
+    removeFromWishlist(item); // Remove from wishlist after adding to cart
   };
 
   return (
-    <div>
+    <Container>
       <h2>My Wishlist</h2>
-      {wishlist.length ? (
-        <div className="flex-row">
+      {!Auth.loggedIn() ? (
+        <p>
+          <Link to="/login">Log in</Link> to view your wishlist!
+        </p>
+      ) : wishlist.length ? (
+        <Row xs={1} md={2} lg={3} className="g-4">
           {wishlist.map((item) => (
-            <div key={item._id} className="card px-1 py-1">
-              <Link to={`/products/${item._id}`}>
-                <img alt={item.name} src={`/images/${item.image}`} />
-                <p>{item.name}</p>
-              </Link>
-              <div>
-                <div>{item.quantity} item(s) in stock</div>
-                <span>${item.price}</span>
-              </div>
-              <button onClick={() => removeFromWishlist(item._id)}>
-                Remove from Wishlist
-              </button>
-            </div>
+            <Col key={item._id}>
+              <Card>
+                <Link to={`/products/${item._id}`}>
+                  <Card.Img variant="top" src={`/images/${item.image}`} alt={item.name} /> 
+                </Link>
+                <Card.Body>
+                  <Card.Title>{item.name}</Card.Title>
+                  <Card.Text>${item.price}</Card.Text>
+                  <Button variant="primary" onClick={() => addToCart(item)}>Add to Cart</Button>
+                  <Button variant="danger" onClick={() => removeFromWishlist(item)}>Remove</Button>
+                </Card.Body>
+              </Card>
+            </Col>
           ))}
-        </div>
+        </Row>
       ) : (
-        <h3>You have no wishlist items</h3>
+        <p>Your wishlist is empty.</p>
       )}
-    </div>
+    </Container>
   );
 };
 
 export default Wishlist;
-

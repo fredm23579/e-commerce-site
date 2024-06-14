@@ -1,23 +1,32 @@
-const mongoose = require('mongoose');
-
+import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 const productSchema = new Schema({
   name: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
+    maxlength: 100 
   },
   description: {
-    type: String
+    type: String,
+    maxlength: 500 
   },
-  image: {
-    type: String
-  },
+  image: String, 
   price: {
     type: Number,
     required: true,
     min: 0.99
+  },
+  salePrice: { 
+    type: Number,
+    min: 0.99,
+    validate: {
+      validator: function(value) {
+        return value < this.price; // Sale price must be lower than original price
+      },
+      message: 'Sale price must be less than the original price'
+    }
   },
   quantity: {
     type: Number,
@@ -28,9 +37,20 @@ const productSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Category',
     required: true
+  },
+  sku: String, 
+  weight: Number,
+  dimensions: {
+    length: Number,
+    width: Number,
+    height: Number
+  },
+  isActive: {
+    type: Boolean,
+    default: true
   }
 });
 
 const Product = mongoose.model('Product', productSchema);
 
-module.exports = Product;
+export default Product;

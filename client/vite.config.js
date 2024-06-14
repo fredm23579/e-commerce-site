@@ -8,15 +8,15 @@ export default defineConfig({
     open: true,
     proxy: {
       '/graphql': {
-        target: 'https://e-commerce-site-us2y.onrender.com/',
-        secure: false, // Set to true if your backend uses HTTPS
+        target: 'https://e-commerce-site-us2y.onrender.com/graphql', // Ensure the path includes /graphql
+        secure: true,          // Set to true if your backend uses HTTPS (recommended)
         changeOrigin: true,
-        // Optional error handling
-        onError: (err, req, res) => {
-          console.error('Proxy error:', err);
-          res.writeHead(500, { 'Content-Type': 'text/plain' });
-          res.end('Something went wrong. And we are reporting a custom error message.');
-        }
+        rewrite: (path) => path.replace(/^\/graphql/, ''), // Remove '/graphql' prefix from requests
+      },
+      '/images': { // Proxy for images
+        target: 'https://e-commerce-site-us2y.onrender.com/', 
+        secure: true,
+        changeOrigin: true
       }
     }
   },

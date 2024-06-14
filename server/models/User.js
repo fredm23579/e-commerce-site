@@ -1,7 +1,8 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
+import bcrypt from 'bcrypt';
+import Order from './Order';
+
 const { Schema } = mongoose;
-const bcrypt = require('bcrypt');
-const Order = require('./Order');
 
 const userSchema = new Schema({
   firstName: {
@@ -18,20 +19,22 @@ const userSchema = new Schema({
     type: String,
     required: true,
     unique: true,
+    match: [/.+@.+\..+/, 'Must match an email address!']  // Validate email format
   },
   password: {
     type: String,
     required: true,
-    minlength: 5,
+    minlength: 8,  // Increase minlength for better security
   },
   orders: [Order.schema],
   wishlist: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
   favorites: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
 });
 
+// Pre-save hook for password hashing
 userSchema.pre('save', async function (next) {
   if (this.isNew || this.isModified('password')) {
-    const saltRounds = 10;
+    const saltRounds = 12;  // Stronger hashing with 12 salt rounds 
     this.password = await bcrypt.hash(this.password, saltRounds);
   }
   next();
@@ -43,4 +46,4 @@ userSchema.methods.isCorrectPassword = async function (password) {
 
 const User = mongoose.model('User', userSchema);
 
-module.exports = User;
+export default User;  // Use ES Module export 

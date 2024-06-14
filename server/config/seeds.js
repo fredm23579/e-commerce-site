@@ -1,6 +1,8 @@
-const db = require('./connection');
-const { User, Product, Category } = require('../models');
-const cleanDB = require('./cleanDB');
+import mongoose from 'mongoose'; // Import mongoose for database interaction
+import db from './connection.js'; // Import the database connection from connection.js
+import { User, Product, Category } from '../models'; // Import your Mongoose models
+import cleanDB from './cleanDB.js'; // Import your custom cleanDB function
+
 
 db.once('open', async () => {
   await cleanDB('Category', 'categories');

@@ -1,63 +1,43 @@
 // client/src/App.jsx
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import {
-  ApolloClient,
-  InMemoryCache,
-  ApolloProvider,
-  createHttpLink,
-} from '@apollo/client';
-import { setContext } from '@apollo/client/link/context';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { Suspense, lazy } from 'react'; // For lazy loading and Suspense
 
 import Nav from './components/Nav';
 import { StoreProvider } from './utils/GlobalState';
 import Home from './pages/Home';
 import Detail from './pages/Detail';
 import NoMatch from './pages/NoMatch';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import OrderHistory from './pages/OrderHistory';
-import Favorites from './pages/Favorites'; 
-import Success from './pages/Success';
 
-//import Wishlist from './pages/Wishlist'; <Route path="/Wishlist" element={<Wishlist />} />
-
-const httpLink = createHttpLink({
-  uri: 'https://e-commerce-site-us2y.onrender.com/:3001/graphql',
-});
-
-const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem('id_token');
-  return {
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : '',
-    },
-  };
-});
-
-const client = new ApolloClient({
-  link: authLink.concat(httpLink),
-  cache: new InMemoryCache(),
-});
+// Lazy Load Other Pages
+const Login = lazy(() => import('./pages/Login'));
+const Signup = lazy(() => import('./pages/Signup'));
+const OrderHistory = lazy(() => import('./pages/OrderHistory'));
+const Favorites = lazy(() => import('./pages/Favorites'));
+const Success = lazy(() => import('./pages/Success'));
+const Wishlist = lazy(() => import('./pages/Wishlist')); // Add Wishlist here
 
 function App() {
   return (
-    <ApolloProvider client={client}>
-      <StoreProvider>
-        <Nav />
+    <StoreProvider>
+      <Nav />
+      <ToastContainer />
+      <Suspense fallback={<div>Loading...</div>}> {/* Add Suspense fallback */}
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/Login" element={<Login />} />
-          <Route path="/Signup" element={<Signup />} />
-          <Route path="/OrderHistory" element={<OrderHistory />} />
-          <Route path="/Favorites" element={<Favorites />} />
-          <Route path="/Success" element={<Success />} />
-          <Route path="/Products/:id" element={<Detail />} />
+          <Route path="/products/:id" element={<Detail />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/orderhistory" element={<OrderHistory />} />
+          <Route path="/favorites" element={<Favorites />} />
+          <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/success" element={<Success />} />
           <Route path="*" element={<NoMatch />} />
         </Routes>
-      </StoreProvider>
-    </ApolloProvider>
+      </Suspense>
+    </StoreProvider>
   );
 }
 

@@ -1,6 +1,6 @@
-const User = require('./User');
-const Product = require('./Product');
-const Category = require('./Category');
-const Order = require('./Order');
+import User from './User.js'; // Ensure .js extension when using ES Modules
+import Product from './Product.js';
+import Category from './Category.js';
+import Order from './Order.js';
 
-module.exports = { User, Product, Category, Order };
+export { User, Product, Category, Order }; 

@@ -1,43 +1,68 @@
 // client/src/pages/Wishlist.jsx
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
+import { Link } from 'react-router-dom';
 import { QUERY_WISHLIST } from "../utils/queries";
 import { idbPromise } from "../utils/helpers";
 import { useStoreContext } from "../utils/GlobalState";
+import { Alert, Container, Row, Col, Card, Button, Spinner } from "react-bootstrap"; // Using React Bootstrap for styling
 
 const Wishlist = () => {
-  const { loading, data } = useQuery(QUERY_WISHLIST);
   const [state, dispatch] = useStoreContext();
+  const [errorMessage, setErrorMessage] = useState(''); // For error messages
+  const { loading, error, data } = useQuery(QUERY_WISHLIST);
+
+  useEffect(() => {
+    // Handle query errors
+    if (error) {
+      setErrorMessage('Error fetching wishlist data. Please try again later.');
+      console.error(error);
+    }
+  }, [error]);
 
   useEffect(() => {
     if (data && data.wishlist) {
-      dispatch({ type: "UPDATE_WISHLIST", wishlist: data.wishlist });
-      data.wishlist.forEach((item) => {
-        idbPromise("wishlist", "put", item);
-      });
-    } else if (!loading) {
-      idbPromise("wishlist", "get").then((wishlist) => {
-        dispatch({ type: "UPDATE_WISHLIST", wishlist });
-      });
+      // Update state and store in IndexedDB only for new items
+      const wishlistItems = data.wishlist.filter(item => !state.wishlist.find(w => w._id === item._id));
+      dispatch({ type: "UPDATE_WISHLIST", wishlist: wishlistItems });
+      wishlistItems.forEach(item => idbPromise('wishlist', 'put', item));
+    } else if (!loading && !data?.wishlist) { 
+      // Retrieve from IndexedDB when no data or loading finished without results
+      idbPromise('wishlist', 'get').then(items => dispatch({ type: "UPDATE_WISHLIST", wishlist: items }));
     }
-  }, [data, loading, dispatch]);
+  }, [data, loading, dispatch, state.wishlist]);
 
   return (
-    <div>
+    <Container>
       <h2>My Wishlist</h2>
-      {state.wishlist && state.wishlist.length ? (
-        <div>
-          {state.wishlist.map((item) => (
-            <div key={item._id}>
-              <p>{item.name}</p>
-              <p>{item.price}</p>
-            </div>
+      {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
+      {loading ? (
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      ) : state.wishlist.length ? (
+        <Row xs={1} md={2} lg={3} className="g-4">
+          {state.wishlist.map(item => (
+            <Col key={item._id}>
+              <Card>
+                <Link to={`/products/${item._id}`}>
+                  {/* Add product image here (if available) */}
+                  <Card.Img variant="top" src={item.image} />
+                </Link>
+                <Card.Body>
+                  <Card.Title>{item.name}</Card.Title>
+                  <Card.Text>${item.price}</Card.Text>
+                  <Button variant="primary">Add to Cart</Button>
+                </Card.Body>
+              </Card>
+            </Col>
           ))}
-        </div>
+        </Row>
       ) : (
-        <h3>You have no items in your wishlist!</h3>
+        <p>Your wishlist is empty.</p>
       )}
-    </div>
+    </Container>
   );
 };
+
 export default Wishlist;

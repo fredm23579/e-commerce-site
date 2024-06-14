@@ -1,16 +1,21 @@
-const models = require('../models');
-const db = require('../config/connection');
+import mongoose from "mongoose";
+import db from '../config/connection.js';
+//import {User, Product, Category} from '../models';
 
-module.exports = async (modelName, collectionName) => {
+export default async function cleanDB(modelName, collectionName) {
   try {
-    let modelExists = await models[modelName].db.db.listCollections({
-      name: collectionName
-    }).toArray()
+    const model = mongoose.models[modelName]; // Get the Mongoose model
 
-    if (modelExists.length) {
-      await db.dropCollection(collectionName);
+    // Check if the collection exists
+    const collections = await db.db.listCollections({ name: collectionName }).toArray();
+    if (collections.length > 0) {
+      await model.collection.drop(); // Drop the collection
+      console.log(`Dropped collection: ${collectionName}`);
+    } else {
+      console.log(`Collection ${collectionName} does not exist.`);
     }
   } catch (err) {
-    throw err;
+    console.error(`Error cleaning database: ${err.message}`);
+    throw err; 
   }
 }

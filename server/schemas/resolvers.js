@@ -1,13 +1,17 @@
-require('dotenv').config();
-const { User, Product, Category, Order } = require('../models');
-const { signToken } = require('../utils/auth');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const { AuthenticationError } = require('apollo-server-express');
+import { User, Product, Category, Order } from '../models';
+import { signToken } from '../utils/auth';
+import stripe from 'stripe';
+import { AuthenticationError } from 'apollo-server-express';
 
 const resolvers = {
   Query: {
     categories: async () => {
-      return await Category.find();
+      try {
+        return await Category.find();
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+        throw new Error('Could not fetch categories.'); 
+      }
     },
     products: async (parent, { category, name }) => {
       const params = {};
@@ -17,77 +21,111 @@ const resolvers = {
       }
 
       if (name) {
-        params.name = {
-          $regex: name,
-          $options: 'i'
-        };
+        params.name = { $regex: name, $options: 'i' };
       }
 
-      return await Product.find(params).populate('category');
+      try {
+        return await Product.find(params).populate('category');
+      } catch (err) {
+        console.error('Error fetching products:', err);
+        throw new Error('Could not fetch products.'); 
+      }
     },
     product: async (parent, { _id }) => {
-      return await Product.findById(_id).populate('category');
+      try {
+        return await Product.findById(_id).populate('category');
+      } catch (err) {
+        console.error('Error fetching product:', err);
+        throw new Error('Could not fetch product details.'); 
+      }
     },
     user: async (parent, args, context) => {
       if (context.user) {
-        const user = await User.findById(context.user._id)
-          .populate({
-            path: 'orders.products',
-            populate: 'category'
-          })
-          .populate('wishlist')
-          .populate('favorites');
+        try {
+          const user = await User.findById(context.user._id)
+            .populate({
+              path: 'orders.products',
+              populate: 'category'
+            })
+            .populate('wishlist')
+            .populate('favorites');
 
-        user.orders.sort((a, b) => b.purchaseDate - a.purchaseDate);
-
-        return user;
+          user.orders.sort((a, b) => b.purchaseDate - a.purchaseDate);
+          return user;
+        } catch (error) {
+          console.error('Error fetching user:', error);
+          throw new AuthenticationError('Failed to fetch user details.'); 
+        }
       }
-
       throw new AuthenticationError('Not logged in');
     },
     order: async (parent, { _id }, context) => {
       if (context.user) {
-        const user = await User.findById(context.user._id).populate({
-          path: 'orders.products',
-          populate: 'category'
-        });
-
-        return user.orders.id(_id);
+        try {
+          const user = await User.findById(context.user._id).populate({
+            path: 'orders.products',
+            populate: 'category'
+          });
+          const order = user.orders.id(_id);
+          if (!order) {
+            throw new Error('Order not found');
+          }
+          return order;
+        } catch (error) {
+          console.error('Error fetching order:', error);
+          throw new Error('Failed to fetch order details.');
+        }
       }
-
       throw new AuthenticationError('Not logged in');
     },
     checkout: async (parent, { products }, context) => {
       const url = new URL(context.headers.referer).origin;
       const line_items = [];
+      let orderTotal = 0; 
 
-      for (const product of products) {
-        const dbProduct = await Product.findById(product._id);
+      try {
+        for (const productInput of products) {
+          const dbProduct = await Product.findById(productInput._id);
+          if (!dbProduct) {
+            throw new Error(`Product not found: ${productInput._id}`);
+          }
 
-        line_items.push({
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: dbProduct.name,
-              description: dbProduct.description,
-              images: [`${url}/images/${dbProduct.image}`]
+          line_items.push({
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: dbProduct.name,
+                description: dbProduct.description,
+                images: [dbProduct.image], 
+              },
+              unit_amount: Math.round(dbProduct.price * 100), // Stripe requires integer amounts
             },
-            unit_amount: dbProduct.price * 100,
-          },
-          quantity: product.purchaseQuantity,
+            quantity: productInput.purchaseQuantity,
+          });
+
+          orderTotal += dbProduct.price * productInput.purchaseQuantity;
+        }
+
+        const session = await stripe.checkout.sessions.create({
+          payment_method_types: ['card'],
+          line_items,
+          mode: 'payment',
+          success_url: `${url}/success?session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${url}/`,
         });
+
+        const order = await Order.create({ 
+          products, 
+          total: orderTotal,
+          user: context.user._id 
+        });
+
+        return { session: session.id, order: order._id };
+      } catch (error) {
+        console.error('Error creating Stripe checkout session:', error.message);
+        throw new Error('Failed to create checkout session.'); 
       }
-
-      const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        line_items,
-        mode: 'payment',
-        success_url: `${url}/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${url}/`,
-      });
-
-      return { session: session.id };
-    },
+    } 
   },
   Mutation: {
     addUser: async (parent, args) => {
@@ -191,4 +229,4 @@ const resolvers = {
   }
 };
 
-module.exports = resolvers;
+export default resolvers;

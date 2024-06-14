@@ -8,9 +8,11 @@ import cors from 'cors';
 import stripePackage from 'stripe';
 
 // Import your Mongoose connection module
-import connectDB from './config/connection.js';  
+import connectDB from './config/connection.js';
 import { authMiddleware } from './utils/auth.js';
 import { typeDefs, resolvers } from './schemas/index.js';
+// Import necessary models for seeding if necessary
+import { Category, Product, User } from './models'; 
 
 // Get your Stripe secret key from environment variables 
 const stripe = stripePackage(process.env.STRIPE_SECRET_KEY);
@@ -27,19 +29,20 @@ const startApolloServer = async () => {
 
   // CORS configuration (replace with your React app's origin)
   app.use(cors({
-    origin: 'https://e-commerce-site-us2y.onrender.com',  // Update with your actual domain
+    origin: process.env.REACT_APP_FRONTEND_URL || 'http://localhost:3000', 
     methods: ['GET', 'POST'], // Adjust if necessary
-    credentials: true, // Allow credentials (e.g., cookies)
+    credentials: true,      
   }));
 
   app.use(express.urlencoded({ extended: false }));
   app.use(express.json());
 
-  app.use('/images', express.static(path.join(__dirname, '../client/images')));
+  // Serve images from the correct path 
+  app.use('/images', express.static(path.join(__dirname, '../client/public/images'))); 
 
   app.use('/graphql', expressMiddleware(server, { context: authMiddleware }));
 
-  // Create checkout session route
+  // Create checkout session route (ensure proper image paths)
   app.post('/create-checkout-session', async (req, res) => {
     const { products } = req.body;
 
@@ -49,7 +52,7 @@ const startApolloServer = async () => {
         product_data: {
           name: product.name,
           description: product.description,
-          images: [`${req.protocol}://${req.get('host')}/images/${product.image}`],
+          images: [product.image],  // Assuming image is already a full URL
         },
         unit_amount: product.price * 100, 
       },
@@ -67,15 +70,14 @@ const startApolloServer = async () => {
 
       res.json({ id: session.id });
     } catch (error) {
-      console.error('Error creating Stripe checkout session:', error.message || error); // Log more detailed error 
+      console.error('Error creating Stripe checkout session:', error.message || error);
       res.status(500).json({ error: 'An error occurred, unable to create session' });
     }
   });
 
-  // Serve static assets in production
+  // Serve static assets in production ONLY
   if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, '../client/dist')));
-
     app.get('*', (req, res) => {
       res.sendFile(path.join(__dirname, '../client/dist/index.html'));
     });
@@ -85,10 +87,9 @@ const startApolloServer = async () => {
   connectDB().then(() => { 
     app.listen(PORT, () => {
       console.log(`API server running on port ${PORT}!`);
-      console.log(`Use GraphQL at https://e-commerce-site-us2y.onrender.com/graphql`); // Update for production
+      console.log(`Use GraphQL at https://e-commerce-site-us2y.onrender.com/graphql`);
     });
   });
 };
 
 startApolloServer();
-

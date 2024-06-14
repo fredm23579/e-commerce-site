@@ -6,24 +6,23 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-.vscode
+/.eslintcache
+
+# Directories for build output
 node_modules
 dist
 dist-ssr
-*.local
-*node_modules
-*dist
-*package-lock.json
-*vscode
-# Editor directories and files
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# IDE/Editor files
+.idea
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-*.env
-*gitignore
