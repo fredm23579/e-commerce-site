@@ -12,12 +12,13 @@ import {
   onError,
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
-import { toast } from 'react-toastify'; // For error notifications
+import { toast, Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Import the CSS
 
 import App from './App';
 
 const httpLink = createHttpLink({
-  uri: 'https://e-commerce-site-us2y.onrender.com/graphql',
+  uri: process.env.REACT_APP_API_URL || '/graphql', // Use environment variable or fallback
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -30,16 +31,23 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-const errorLink = onError(({ graphQLErrors, networkError }) => {
+const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
   if (graphQLErrors) {
     graphQLErrors.forEach(({ message, locations, path }) => {
       console.error(
-        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}, Operation: ${operation.operationName}` // Added operation name
       );
-      // Show user-friendly error notifications
-      toast.error(`GraphQL Error: ${message}`);
+      // Show user-friendly error notifications based on error type
+      if (message.includes("Not logged in") || message.includes("Unauthorized")) {
+        // Handle authentication errors (e.g., redirect to login)
+        toast.error("Please log in to perform this action.");
+        // You might want to redirect to the login page here
+      } else {
+        toast.error(`GraphQL Error: ${message}`);
+      }
     });
   }
+
   if (networkError) {
     console.error(`[Network error]: ${networkError}`);
     toast.error('Network Error: Unable to connect to the server.');
@@ -47,15 +55,17 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 });
 
 const client = new ApolloClient({
-  link: from([errorLink, authLink.concat(httpLink)]), // Compose links
+  link: from([errorLink, authLink.concat(httpLink)]),
   cache: new InMemoryCache(),
 });
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode> 
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
     <ApolloProvider client={client}>
       <BrowserRouter>
         <App />
+        <ToastContainer transition={Slide} />
       </BrowserRouter>
     </ApolloProvider>
   </React.StrictMode>
