@@ -1,8 +1,10 @@
 // server/models/Category.js
 import mongoose from 'mongoose';
-import slugify from 'slugify';
+import mongooseSlugUpdater from 'mongoose-slug-updater';
 
 const { Schema } = mongoose;
+
+mongoose.plugin(mongooseSlugUpdater);  // Apply the slug updater plugin
 
 const categorySchema = new Schema({
   name: {
@@ -18,39 +20,21 @@ const categorySchema = new Schema({
   },
   urlSlug: {
     type: String,
+    slug: "name",   // Generate slug from the 'name' field
     unique: true,
     lowercase: true,
-    index: true, // Add index for faster queries based on urlSlug
+    index: true,      // Add an index for efficient queries
+    slugPaddingSize: 4,  // Minimum length for the auto-incrementing suffix
   },
-});
+}, { timestamps: true }); // Add timestamps for created/updated dates
 
-// Pre-save middleware for slug generation and uniqueness check
-categorySchema.pre('save', async function (next) {
-  try {
-    if (!this.urlSlug) {
-      this.urlSlug = slugify(this.name, { lower: true });
-    }
+// Custom validation for name (optional)
+categorySchema.path('name').validate(async (value) => {
+  const slug = slugify(value, { lower: true });
+  const count = await mongoose.models.Category.countDocuments({ urlSlug: slug });
+  return !count; // Return true if the slug doesn't exist yet
+}, 'Category name already exists');
 
-    // Check for uniqueness (and handle collisions) 
-    let slugExists = await this.constructor.findOne({ urlSlug: this.urlSlug });
-    let counter = 1;
-    while (slugExists) {
-      this.urlSlug = `${slugify(this.name, { lower: true })}-${counter}`;
-      counter++;
-      slugExists = await this.constructor.findOne({ urlSlug: this.urlSlug });
-    }
-
-    next();
-  } catch (error) {
-    // Handle errors that might occur during slug generation or DB query
-    next(error); // Pass the error to the next middleware (or the save operation)
-  }
-});
-
-// Post-save middleware for logging (optional)
-categorySchema.post('save', function (doc) {
-  console.log('%s has been saved', doc._id); // Log the saved category's ID
-});
 
 const Category = mongoose.model('Category', categorySchema);
 
