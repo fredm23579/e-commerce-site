@@ -1,7 +1,7 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 
-const connectionString = process.env.MONGODB_URI || 'mongodb://localhost/cleanDB';
+const connectionString = process.env.MONGODB_URI || 'mongodb+srv://motta:baFi5HJmumvX4NtL@cluster0.gdbtbna.mongodb.net/cleanDB?retryWrites=true&w=majority';
 
 mongoose.connect(connectionString, {
   useNewUrlParser: true,

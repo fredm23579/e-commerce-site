@@ -10,7 +10,7 @@ import { useStoreContext } from '../../utils/GlobalState';
 import { TOGGLE_CART, ADD_MULTIPLE_TO_CART } from '../../utils/actions';
 import './style.css';
 
-const stripePromise = loadStripe(process.env.STRIPE_SECRET_KEY); 
+const stripePromise = loadStripe('sk_test_4eC39HqLyjWDarjtT1zdp7dc'); 
 
 const Cart = () => {
   const [state, dispatch] = useStoreContext();
@@ -39,7 +39,7 @@ const Cart = () => {
   }
 
   async function createCheckoutSession(products) {
-    const response = await fetch('http://localhost:3001/create-checkout-session', { // Make sure the endpoint URL matches your server setup
+    const response = await fetch('mongodb+srv://motta:baFi5HJmumvX4NtL@cluster0.gdbtbna.mongodb.net/cleanDB?retryWrites=true&w=majority', { // Make sure the endpoint URL matches your server setup
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

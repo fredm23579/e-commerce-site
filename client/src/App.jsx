@@ -23,7 +23,7 @@ import Success from './pages/Success';
 //import Wishlist from './pages/Wishlist'; <Route path="/Wishlist" element={<Wishlist />} />
 
 const httpLink = createHttpLink({
-  uri: 'http://localhost:3001/graphql',
+  uri: 'mongodb+srv://motta:baFi5HJmumvX4NtL@cluster0.gdbtbna.mongodb.net/cleanDB?retryWrites=true&w=majority:3001/graphql',
 });
 
 const authLink = setContext((_, { headers }) => {
