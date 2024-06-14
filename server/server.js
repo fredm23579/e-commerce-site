@@ -12,7 +12,7 @@ import connectDB from './config/connection.js';
 import { authMiddleware } from './utils/auth.js';
 import { typeDefs, resolvers } from './schemas/index.js';
 // Import necessary models for seeding if necessary
-import { Category, Product, User } from './models'; 
+//import { Category, Product, User } from './models'; 
 
 // Get your Stripe secret key from environment variables 
 const stripe = stripePackage(process.env.STRIPE_SECRET_KEY);
@@ -29,7 +29,7 @@ const startApolloServer = async () => {
 
   // CORS configuration (replace with your React app's origin)
   app.use(cors({
-    origin: process.env.REACT_APP_FRONTEND_URL || 'http://localhost:3000', 
+    origin: process.env.REACT_APP_FRONTEND_URL || 'https://e-commerce-site-us2y.onrender.com/', 
     methods: ['GET', 'POST'], // Adjust if necessary
     credentials: true,      
   }));
