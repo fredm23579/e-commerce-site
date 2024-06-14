@@ -1,4 +1,6 @@
-require('dotenv').config();
+//import dotenv from 'dotenv';
+//dotenv.config();
+import React from 'react'; 
 import { useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { idbPromise } from '../../utils/helpers';
