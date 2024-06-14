@@ -1,8 +1,12 @@
-import mongoose from 'mongoose'; // Import mongoose for database interaction
+//import mongoose from 'mongoose'; // Import mongoose for database interaction
 import db from './connection.js'; // Import the database connection from connection.js
 import { User, Product, Category } from '../models'; // Import your Mongoose models
 import cleanDB from './cleanDB.js'; // Import your custom cleanDB function
-
+// server/config/seeds.js
+import User from '../models/User.js'; // Add the .js extension
+import Product from '../models/Product.js';
+import Category from '../models/Category.js';
+//import Order from '../models/Order.js';
 
 db.once('open', async () => {
   await cleanDB('Category', 'categories');
