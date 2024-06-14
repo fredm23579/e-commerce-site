@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { QUERY_WISHLIST } from "../utils/queries";
 import { idbPromise } from "../utils/helpers";
 import { useStoreContext } from "../utils/GlobalState";
-import { Alert, Container, Row, Col, Card, Button, Spinner } from "react-bootstrap"; // Using React Bootstrap for styling
+import { Alert, Container, Row, Col, Card, Button, Spinner } from 'react-bootstrap';
 
 const Wishlist = () => {
   const [state, dispatch] = useStoreContext();
