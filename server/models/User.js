@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from 'bcrypt';
-import Order from './Order';
+import Order from './Order.js';
 
 const { Schema } = mongoose;
 
