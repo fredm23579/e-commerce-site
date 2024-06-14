@@ -1,10 +1,11 @@
 // server/models/Category.js
 import mongoose from 'mongoose';
-import mongooseSlugUpdater from 'mongoose-slug-updater';
+import mongooseSlugUpdater from 'mongoose-slug-updater'; // Import the plugin
+import slugify from 'slugify'; 
 
 const { Schema } = mongoose;
 
-mongoose.plugin(mongooseSlugUpdater);  // Apply the slug updater plugin
+mongoose.plugin(mongooseSlugUpdater); 
 
 const categorySchema = new Schema({
   name: {
@@ -20,21 +21,52 @@ const categorySchema = new Schema({
   },
   urlSlug: {
     type: String,
-    slug: "name",   // Generate slug from the 'name' field
+    slug: "name",   
     unique: true,
     lowercase: true,
-    index: true,      // Add an index for efficient queries
-    slugPaddingSize: 4,  // Minimum length for the auto-incrementing suffix
+    index: true,
+    slugPaddingSize: 4, 
   },
-}, { timestamps: true }); // Add timestamps for created/updated dates
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
-// Custom validation for name (optional)
-categorySchema.path('name').validate(async (value) => {
-  const slug = slugify(value, { lower: true });
-  const count = await mongoose.models.Category.countDocuments({ urlSlug: slug });
-  return !count; // Return true if the slug doesn't exist yet
-}, 'Category name already exists');
+// Pre-save middleware for slug generation and uniqueness check (with error handling)
+categorySchema.pre('save', async function (next) {
+  try {
+    if (!this.urlSlug) {
+      this.urlSlug = slugify(this.name, { lower: true });
+    }
 
+    // Robust uniqueness check with retries
+    let slug = this.urlSlug;
+    let counter = 1;
+    while (await this.constructor.exists({ urlSlug: slug })) {
+      slug = `${this.urlSlug}-${counter}`;
+      counter++;
+    }
+    this.urlSlug = slug;
+
+    next(); 
+  } catch (error) {
+    next(new Error('Slug generation or uniqueness check failed')); 
+  }
+});
+
+// Custom validation for name (with error handling)
+categorySchema.path('name').validate(async function (value) {
+  try {
+    const existingSlug = slugify(value, { lower: true });
+    const existingCategory = await this.constructor.findOne({ urlSlug: existingSlug });
+    return !existingCategory; // True if slug is unique
+  } catch (error) {
+    // Handle potential errors during the uniqueness check
+    console.error("Error during name validation:", error);
+    throw new Error('Category validation failed'); 
+  }
+}, 'Category with similar name already exists');
 
 const Category = mongoose.model('Category', categorySchema);
 
