@@ -1,28 +1,26 @@
 {
-  "name": "store-mern-server",
+  "name": "mern-server",
   "version": "1.0.0",
-  "description": "Server part of the MERN E-Commerce site",
+  "description": "",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "watch": "nodemon",
     "seed": "node config/seeds.js"
   },
-  "keywords": ["MongoDB", "GraphQL", "Express", "bcrypt", "Mongoose"],
-  "author": "Fred Motta",
-  "license": "MIT",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "dotenv": "latest", 
-    "@apollo/server": "latest",
-    "apollo-server-express": "latest",
-    "bcrypt": "latest",
-    "cors": "latest",
-    "express": "latest",
-    "graphql": "latest",
-    "jsonwebtoken": "latest",
-    "mongoose": "latest"
+    "@apollo/server": "^4.7.2",
+    "bcrypt": "^4.0.1",
+    "express": "^4.17.2",
+    "graphql": "^16.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^7.0.2",
+    "stripe": "^8.67.0"
   },
   "devDependencies": {
-    "nodemon": "latest"
+    "nodemon": "^2.0.2"
   }
 }
