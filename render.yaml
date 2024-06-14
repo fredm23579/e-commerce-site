@@ -1,17 +1,37 @@
 services:
-- type: web
-  name: e-commerce-site
-  env: node
-  runtime: static
-  repo: https://github.com/fredm23579/e-commerce-site
-  branch: works
-  buildCommand: npm run render-build
-  startCommand: npm start
-  staticPublishPath: client/dist
-  pullRequestPreviewsEnabled: true
-  envVars:
+  - type: web       # This is a web service
+    name: e-commerce-site
+    env: node       # Use the Node.js environment
+    runtime: node   # Specify 'node' instead of 'static' to run a server
+    repo: https://github.com/fredm23579/e-commerce-site
+    branch: works
+
+    # Build and start commands
+    buildCommand: npm install @vitejs/plugin-react && npm run render-build   # Build frontend and backend
+    startCommand: cd server && npm start          # Start the backend server
+
+    # Static files configuration
+    staticPublishPath: client/dist               # Path to built frontend assets
+
+    # Enable pull request previews (optional)
+    pullRequestPreviewsEnabled: true
+
+    envVars:
+      # Environment Variables (Securely managed in Render dashboard)
       - key: NODE_ENV
         value: production
-      - key: MONGODB_URI
-        value: mongodb+srv://motta:baFi5HJmumvX4NtL@cluster0.gdbtbna.mongodb.net/cleanDB?retryWrites=true&w=majority
+      - key: MONGODB_URI 
+        fromDatabase:
+          name: mongodb-ecommerce-site
+          property: connectionString
+      - key: STRIPE_SECRET_KEY   
+        fromSecret: stripe_secret_key   # Reference secret named 'stripe_secret_key'
+      - key: REACT_APP_BACKEND_URL
+        value: https://e-commerce-site-us2y.onrender.com/  
+
+    # Use a dedicated database service instead of exposing MONGODB_URI
+    database:
+      type: mongodb
+      name: mongodb-ecommerce-site # Match with the fromDatabase key above
+
 version: "1"

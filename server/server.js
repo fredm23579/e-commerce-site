@@ -1,14 +1,18 @@
-require('dotenv').config();
+require('dotenv').config(); // Load environment variables from .env file
+
 import express from 'express';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import path from 'path';
-import { authMiddleware } from './utils/auth.js';
-import { typeDefs, resolvers } from './schemas/index.js';
-import db from './config/connection.js';
 import cors from 'cors';
 import stripePackage from 'stripe';
 
+// Import your Mongoose connection module
+import connectDB from './config/connection.js';  
+import { authMiddleware } from './utils/auth.js';
+import { typeDefs, resolvers } from './schemas/index.js';
+
+// Get your Stripe secret key from environment variables 
 const stripe = stripePackage(process.env.STRIPE_SECRET_KEY);
 
 const PORT = process.env.PORT || 3001;
@@ -21,9 +25,11 @@ const server = new ApolloServer({
 const startApolloServer = async () => {
   await server.start();
 
+  // CORS configuration (replace with your React app's origin)
   app.use(cors({
-    origin: process.env.SITE.join(':3001'),
-    credentials: true,
+    origin: 'https://e-commerce-site-us2y.onrender.com',  // Update with your actual domain
+    methods: ['GET', 'POST'], // Adjust if necessary
+    credentials: true, // Allow credentials (e.g., cookies)
   }));
 
   app.use(express.urlencoded({ extended: false }));
@@ -31,9 +37,7 @@ const startApolloServer = async () => {
 
   app.use('/images', express.static(path.join(__dirname, '../client/images')));
 
-  app.use('/graphql', expressMiddleware(server, {
-    context: authMiddleware
-  }));
+  app.use('/graphql', expressMiddleware(server, { context: authMiddleware }));
 
   // Create checkout session route
   app.post('/create-checkout-session', async (req, res) => {
@@ -47,7 +51,7 @@ const startApolloServer = async () => {
           description: product.description,
           images: [`${req.protocol}://${req.get('host')}/images/${product.image}`],
         },
-        unit_amount: product.price * 100, // Convert price to cents
+        unit_amount: product.price * 100, 
       },
       quantity: product.purchaseQuantity,
     }));
@@ -63,11 +67,12 @@ const startApolloServer = async () => {
 
       res.json({ id: session.id });
     } catch (error) {
-      console.error('Error creating Stripe checkout session:', error);
+      console.error('Error creating Stripe checkout session:', error.message || error); // Log more detailed error 
       res.status(500).json({ error: 'An error occurred, unable to create session' });
     }
   });
 
+  // Serve static assets in production
   if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, '../client/dist')));
 
@@ -76,12 +81,14 @@ const startApolloServer = async () => {
     });
   }
 
-  db.once('open', () => {
+  // Start the server after the database connection is established
+  connectDB().then(() => { 
     app.listen(PORT, () => {
       console.log(`API server running on port ${PORT}!`);
-      console.log(`Use GraphQL at mongodb+srv://motta:baFi5HJmumvX4NtL@cluster0.gdbtbna.mongodb.net/cleanDB?retryWrites=true&w=majority:${PORT}/graphql`);
+      console.log(`Use GraphQL at https://e-commerce-site-us2y.onrender.com/graphql`); // Update for production
     });
   });
 };
 
 startApolloServer();
+
