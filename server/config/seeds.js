@@ -1,6 +1,7 @@
 //import mongoose from 'mongoose'; // Import mongoose for database interaction
 import db from './connection.js'; // Import the database connection from connection.js
-import { User, Product, Category } from '../models'; // Import your Mongoose models
+// server/config/seeds.js
+import { User, Product, Category, Order } from '../models/index.js'; // <-- Correct path
 import cleanDB from './cleanDB.js'; // Import your custom cleanDB function
 
 db.once('open', async () => {
