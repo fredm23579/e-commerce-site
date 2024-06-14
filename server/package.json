@@ -27,7 +27,7 @@
     "jsonwebtoken": "^9.0.0", 
     "mongoose": "^7.0.2",
     "stripe": "^12.9.0",
-    "mongoose-slug-updater": "^2.15.0"
+    "mongoose-slug-updater": "^3.3.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.22" 
