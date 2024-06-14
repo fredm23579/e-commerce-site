@@ -231,30 +231,65 @@ db.once('open', async () => {
 
   console.log('products seeded');
 
-  await User.create({
-    firstName: 'Jeff',
-    lastName: 'Bezzoss',
-    email: 'Jeff@testmail.com',
-    password: 'password12345',
-    orders: [
-      {
-        products: [products[0]._id, products[0]._id, products[1]._id]
-      }
-    ]
-  });
+  const users = await User.create([
+    {
+      firstName: 'Jeff',
+      lastName: 'Bezos',
+      email: 'Jeff@testmail.com',
+      password: 'password12345',
+      orders: [
+        {
+          products: [
+            { product: products[0]._id, quantity: 2, price: products[0].price }, 
+            { product: products[1]._id, price: products[1].price }, // Default quantity of 1
+            { product: products[2]._id, quantity: 3, price: products[2].price }
+          ],
+          total: 100.97, // Calculate the total based on product prices and quantities
+          shippingAddress: {
+            street: '123 Main St',
+            city: 'Anytown',
+            state: 'CA',
+            postalCode: '90210',
+            country: 'USA'
+          }
+        }
+      ]
+    },
+    {
+      firstName: 'Bob',
+      lastName: 'Holt',
+      email: 'bholt@testmail.com',
+      password: 'password12345',
+      orders: [
+        {
+          products: [
+            { product: products[0]._id, quantity: 1, price: products[0].price }, 
+            { product: products[1]._id, price: products[1].price }, // Default quantity of 1
+            { product: products[2]._id, quantity: 1, price: products[2].price }
+          ],
+          total: 100.97, // Calculate the total based on product prices and quantities
+          shippingAddress: {
+            street: '123 Sate St',
+            city: 'Sometown',
+            state: 'CA',
+            postalCode: '91210',
+            country: 'USA'  // Bob has no initial orders
+          }
+        }
+      ]
+    }
+  ]);
 
-  await User.create({
-    firstName: 'Bob',
-    lastName: 'Holt',
-    email: 'bholt@testmail.com',
-    password: 'password12345'
-  });
-
-  console.log('users seeded');
+  console.log('Users seeded:', users.map(u => u.email));
   console.log('Database seeded successfully!');
-  process.exit(0); // Exit successfully
+  process.exit(0); 
 } catch (error) {
-  console.error('Error seeding database:', error);
-  process.exit(1); // Exit with an error code
+  // Handle errors, including validation errors
+  if (error.name === 'ValidationError') {
+    console.error('Validation Error:', error.message);
+  } else {
+    console.error('Error seeding database:', error);
+  }
+  process.exit(1); 
 }
 });
