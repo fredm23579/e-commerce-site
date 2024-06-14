@@ -1,4 +1,6 @@
-import db from './connection.js'; // Import the connection
+// server/config/seeds.js
+import mongoose from 'mongoose';
+import db from './connection.js';
 import { User, Product, Category } from '../models/index.js';
 import cleanDB from './cleanDB.js';
 
@@ -9,24 +11,41 @@ db.once('open', async () => {
     await cleanDB('Product', 'products');
     await cleanDB('User', 'users');
 
-  const categories = await Category.insertMany([
-    { name: 'Food' },
-    { name: 'Household Supplies' },
-    { name: 'Electronics' },
-    { name: 'Books' },
-    { name: 'Toys' },
-    { name: 'Laboratory Equipment & Supplies' },
-    { name: 'Astronomy' },
-    { name: 'Biology & Life Sciences' },
-    { name: 'Chemistry' },
-    { name: 'Energy' },
-    { name: 'Geology' },
-    { name: 'Physics & Engineering' },
-    { name: 'Environmental & Earth Sciences' },
-    { name: 'Educational Resources' }
-  ]);
+    console.log('Database collections cleared.'); 
 
-  console.log('categories seeded');
+    // Seed Categories (with duplicate handling)
+    const categoryData = [
+      { name: 'Food' },
+      { name: 'Household Supplies' },
+      { name: 'Electronics' },
+      { name: 'Books' },
+      { name: 'Toys' },
+      { name: 'Laboratory Equipment & Supplies' },
+      { name: 'Astronomy' },
+      { name: 'Biology & Life Sciences' },
+      { name: 'Chemistry' },
+      { name: 'Energy' },
+      { name: 'Geology' },
+      { name: 'Physics & Engineering' },
+      { name: 'Environmental & Earth Sciences' },
+      { name: 'Educational Resources' }
+    ];
+
+    const categories = [];
+    for (const category of categoryData) {
+      try {
+        const newCategory = await Category.create(category);
+        categories.push(newCategory);
+      } catch (err) {
+        if (err.code === 11000) { // MongoDB duplicate key error
+          console.warn(`Skipping duplicate category: ${category.name}`);
+        } else {
+          throw err; // Let other errors bubble up for handling
+        }
+      }
+    }
+    console.log('Categories seeded:', categories.length); 
+    console.log('categories seeded');
 
   const products = await Product.insertMany([
     {
