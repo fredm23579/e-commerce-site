@@ -19,7 +19,7 @@ const Signup = lazy(() => import('./pages/Signup.jsx'));
 const OrderHistory = lazy(() => import('./pages/OrderHistory.jsx'));
 const Favorites = lazy(() => import('./pages/Favorites.jsx'));
 const Success = lazy(() => import('./pages/Success.jsx'));
-const Wishlist = lazy(() => import(new URL('./pages/Wishlist.jsx', import.meta.url)));
+//const Wishlist = lazy(() => import(new URL('./pages/Wishlist.jsx', import.meta.url)));
 
 
 function App() {
