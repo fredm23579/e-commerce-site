@@ -12,12 +12,12 @@ import Detail from './pages/Detail';
 import NoMatch from './pages/NoMatch';
 
 // Lazy Load Other Pages
-const Login = lazy(() => import('./pages/Login'));
-const Signup = lazy(() => import('./pages/Signup'));
-const OrderHistory = lazy(() => import('./pages/OrderHistory'));
-const Favorites = lazy(() => import('./pages/Favorites'));
-const Success = lazy(() => import('./pages/Success'));
-const Wishlist = lazy(() => import('./pages/Wishlist')); // Add Wishlist here
+const Login = lazy(() => import('./pages/Login.jsx'));
+const Signup = lazy(() => import('./pages/Signup.jsx'));
+const OrderHistory = lazy(() => import('./pages/OrderHistory.jsx'));
+const Favorites = lazy(() => import('./pages/Favorites.jsx'));
+const Success = lazy(() => import('./pages/Success.jsx'));
+const Wishlist = lazy(() => import('./pages/Wishlist.jsx'));
 
 function App() {
   return (
