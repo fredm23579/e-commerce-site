@@ -1,5 +1,5 @@
 services:
-  - type: web       # This is a web service
+  - type: static       # This is a web service
     name: e-commerce-site
     env: node       # Use the Node.js environment
     runtime: node   # Specify 'node' instead of 'static' to run a server
@@ -8,7 +8,8 @@ services:
 
     # Build and start commands
     buildCommand: npm install @vitejs/plugin-react && npm run render-build   # Build frontend and backend
-    startCommand: cd server && npm start          # Start the backend server
+    startCommand: node --type=module server/server.js
+          # Start the backend server
 
     # Static files configuration
     staticPublishPath: client/dist               # Path to built frontend assets

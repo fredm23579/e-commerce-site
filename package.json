@@ -2,6 +2,7 @@
   "name": "mern-shopping",
   "version": "1.0.0",
   "description": "A MERN stack e-commerce application", 
+  "type": "module",
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js",
