@@ -39,7 +39,7 @@ const Cart = () => {
   }
 
   async function createCheckoutSession(products) {
-    const response = await fetch('mongodb+srv://motta:baFi5HJmumvX4NtL@cluster0.gdbtbna.mongodb.net/cleanDB?retryWrites=true&w=majority', { // Make sure the endpoint URL matches your server setup
+    const response = await fetch('https://e-commerce-site-us2y.onrender.com/:3001/graphql', { // Make sure the endpoint URL matches your server setup
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -5,11 +5,11 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 3000,
+    port: 3001,
     open: true,
     proxy: {
       '/graphql': {
-        target: 'mongodb+srv://motta:baFi5HJmumvX4NtL@cluster0.gdbtbna.mongodb.net/cleanDB?retryWrites=true&w=majority:3001/graphql',
+        target: 'https://e-commerce-site-us2y.onrender.com/:3001',
         secure: false,
         changeOrigin: true
       }

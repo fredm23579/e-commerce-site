@@ -1,5 +1,4 @@
 require('dotenv').config();
-import 'dotenv/config';
 import express from 'express';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
@@ -23,7 +22,7 @@ const startApolloServer = async () => {
   await server.start();
 
   app.use(cors({
-    origin: 'mongodb+srv://motta:baFi5HJmumvX4NtL@cluster0.gdbtbna.mongodb.net/cleanDB?retryWrites=true&w=majority:3001',
+    origin: process.env.SITE.join(':3001'),
     credentials: true,
   }));
 
@@ -80,7 +79,7 @@ const startApolloServer = async () => {
   db.once('open', () => {
     app.listen(PORT, () => {
       console.log(`API server running on port ${PORT}!`);
-      console.log(`Use GraphQL at mongodb+srv://motta:baFi5HJmumvX4NtL@cluster0.gdbtbna.mongodb.net/cleanDB?retryWrites=true&w=majority:3001/graphql:${PORT}/graphql`);
+      console.log(`Use GraphQL at mongodb+srv://motta:baFi5HJmumvX4NtL@cluster0.gdbtbna.mongodb.net/cleanDB?retryWrites=true&w=majority:${PORT}/graphql`);
     });
   });
 };

@@ -15,7 +15,7 @@ import App from './App';
 
 
 const httpLink = createHttpLink({
-  uri: 'mongodb+srv://motta:baFi5HJmumvX4NtL@cluster0.gdbtbna.mongodb.net/cleanDB?retryWrites=true&w=majority:3001/graphql',
+  uri: 'https://e-commerce-site-us2y.onrender.com/:3001/graphql',
 });
 
 const authLink = setContext((_, { headers }) => {
