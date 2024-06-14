@@ -1,13 +1,13 @@
-//import mongoose from 'mongoose'; // Import mongoose for database interaction
-import db from './connection.js'; // Import the database connection from connection.js
-// server/config/seeds.js
-import { User, Product, Category, Order } from '../models/index.js'; // <-- Correct path
-import cleanDB from './cleanDB.js'; // Import your custom cleanDB function
+import db from './connection.js'; // Import the connection
+import { User, Product, Category } from '../models/index.js';
+import cleanDB from './cleanDB.js';
 
 db.once('open', async () => {
-  await cleanDB('Category', 'categories');
-  await cleanDB('Product', 'products');
-  await cleanDB('User', 'users');
+  try {
+    // Clear Collections
+    await cleanDB('Category', 'categories');
+    await cleanDB('Product', 'products');
+    await cleanDB('User', 'users');
 
   const categories = await Category.insertMany([
     { name: 'Food' },
@@ -232,6 +232,10 @@ db.once('open', async () => {
   });
 
   console.log('users seeded');
-
-  process.exit();
+  console.log('Database seeded successfully!');
+  process.exit(0); // Exit successfully
+} catch (error) {
+  console.error('Error seeding database:', error);
+  process.exit(1); // Exit with an error code
+}
 });
