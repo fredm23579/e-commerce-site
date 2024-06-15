@@ -8,6 +8,7 @@ import path from 'path';
 import cors from 'cors';
 import stripePackage from 'stripe';
 import http from 'http'; // Import the http module
+import { fileURLToPath } from 'url';  // Add this import statement
 
 // Import your Mongoose connection module
 import connectDB from './config/connection.js';
