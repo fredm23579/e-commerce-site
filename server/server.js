@@ -12,7 +12,7 @@ import { fileURLToPath } from 'url';
 
 import { typeDefs, resolvers } from './schemas/index.js';
 import { authMiddleware } from './utils/auth.js';
-import connectDB from './config/connection.js';
+import connectDB from './config/connection.js'; // Import the connectDB function
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -26,6 +26,7 @@ const server = new ApolloServer({
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename); 
+
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
@@ -104,20 +105,15 @@ async function startApolloServer() {
       res.sendFile(path.join(__dirname, '../client/dist/index.html'));
     });
   }
-
-  try {
-    // Start the server after the database connection is established and Apollo Server is started
-    await connectDB(); 
-    await server.start();
-
-    app.listen(PORT, () => {
-      console.log(`API server running on port ${PORT}!`);
-      console.log(`Use GraphQL at http://localhost:${PORT}${server.graphqlPath}`);
-    });
-  } catch (error) {
-    console.error('Error starting the server:', error);
-    process.exit(1);
-  }
+  
+  // Connect to the database, then start the server
+  await connectDB();  
+  await server.start();
+    
+  app.listen(PORT, () => {
+    console.log(`API server running on port ${PORT}!`);
+    console.log(`Use GraphQL at http://localhost:${PORT}${server.graphqlPath}`);
+  });
 };
 
 startApolloServer();

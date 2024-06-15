@@ -53,6 +53,6 @@ process.on('SIGINT', async () => {
 
 // Initialize Connection
 connectDB(); 
-
+console.log("Is connectionDB a function", typeof connectDB === 'function');
 // Export the Mongoose Connection
-export default mongoose.connection; 
+export default connectDB;
