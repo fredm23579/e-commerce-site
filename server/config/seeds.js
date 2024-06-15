@@ -1,16 +1,17 @@
 // server/config/seeds.js
-import mongoose from 'mongoose';
-import db from './connection.js';
-import { User, Product, Category } from '../models/index.js';
-import cleanDB from './cleanDB.js';
-db.once('open', async () => {
+//import mongoose from "mongoose";
+import db from "./connection.js";
+import { User, Product, Category } from "../models/index.js";
+import cleanDB from "./cleanDB.js";
+
+db.once("open", async () => {
   try {
     // Clear Collections
-    await cleanDB('Category', 'categories');
-    await cleanDB('Product', 'products');
-    await cleanDB('User', 'users');
+    await cleanDB("Category", "categories");
+    await cleanDB("Product", "products");
+    await cleanDB("User", "users");
 
-    console.log('Database collections cleared.'); 
+    console.log("Database collections cleared.");
 
     // Seed Categories (with duplicate handling)
     const categoryData = [
@@ -43,10 +44,10 @@ db.once('open', async () => {
         }
       }
     }
-    console.log('Categories seeded:', categories.length); 
-    console.log('categories seeded');
+    console.log("Categories seeded:", categories.length);
+    console.log("categories seeded");
 
-  const products = await Product.insertMany([
+    const products = await Product.insertMany([
     {
       name: 'Digital Multimeter',
       description:
@@ -230,65 +231,74 @@ db.once('open', async () => {
 
   console.log('products seeded');
 
+  // Create users with valid order data (Option 1)
   const users = await User.create([
     {
-      firstName: 'Jeff',
-      lastName: 'Bezos',
-      email: 'Jeff@testmail.com',
-      password: 'password12345',
+      firstName: "Jeff",
+      lastName: "Bezos",
+      email: "Jeff@testmail.com",
+      password: "password12345",
       orders: [
         {
-          products: [
-            { product: products[0]._id, quantity: 2, price: products[0].price }, 
-            { product: products[1]._id, price: products[1].price }, // Default quantity of 1
-            { product: products[2]._id, quantity: 3, price: products[2].price }
-          ],
-          total: 100.97, // Calculate the total based on product prices and quantities
+          products: products
+            .slice(0, 3)
+            .map((product) => ({
+              product: product._id, 
+              quantity: 2,       
+              price: product.price,
+            })),
+          total: products
+            .slice(0, 3)
+            .reduce((sum, p) => sum + p.price * 2, 0), 
           shippingAddress: {
-            street: '123 Main St',
-            city: 'Anytown',
-            state: 'CA',
-            postalCode: '90210',
-            country: 'USA'
-          }
-        }
-      ]
+            street: "123 Main St",
+            city: "Anytown",
+            state: "CA",
+            postalCode: "90210",
+            country: "USA",
+          },
+        },
+      ],
     },
     {
-      firstName: 'Bob',
-      lastName: 'Holt',
-      email: 'bholt@testmail.com',
-      password: 'password12345',
+      firstName: "Bob",
+      lastName: "Holt",
+      email: "bholt@testmail.com",
+      password: "password12345",
       orders: [
         {
-          products: [
-            { product: products[0]._id, quantity: 1, price: products[0].price }, 
-            { product: products[1]._id, price: products[1].price }, // Default quantity of 1
-            { product: products[2]._id, quantity: 1, price: products[2].price }
-          ],
-          total: 100.97, // Calculate the total based on product prices and quantities
+          products: products
+            .slice(0, 3)
+            .map((product) => ({
+              product: product._id, // Reference the actual product ID
+              quantity: 1,       // Set a valid quantity
+              price: product.price
+            })),
+          total: products
+            .slice(0, 3)
+            .reduce((sum, p) => sum + p.price, 0), 
           shippingAddress: {
-            street: '123 Sate St',
-            city: 'Sometown',
-            state: 'CA',
-            postalCode: '91210',
-            country: 'USA'  // Bob has no initial orders
-          }
-        }
-      ]
-    }
+            street: "123 Sate St",
+            city: "Sometown",
+            state: "CA",
+            postalCode: "91210",
+            country: "USA" 
+          },
+        },
+      ],
+    },
   ]);
-
-  console.log('Users seeded:', users.map(u => u.email));
-  console.log('Database seeded successfully!');
-  process.exit(0); 
+  
+  console.log("Users seeded:", users.map((u) => u.email));
+  console.log("Database seeded successfully!");
+  process.exit(0);
 } catch (error) {
   // Handle errors, including validation errors
-  if (error.name === 'ValidationError') {
-    console.error('Validation Error:', error.message);
+  if (error.name === "ValidationError") {
+    console.error("Validation Error:", error.message);
   } else {
-    console.error('Error seeding database:', error);
+    console.error("Error seeding database:", error);
   }
-  process.exit(1); 
+  process.exit(1);
 }
 });
