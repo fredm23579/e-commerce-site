@@ -6,11 +6,18 @@ import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import path from 'path';
 import cors from 'cors';
-import stripe from 'stripe';
+import stripePackage from 'stripe';
+import http from 'http'; // Import the http module
 
+// Import your Mongoose connection module
 import connectDB from './config/connection.js';
 import { authMiddleware } from './utils/auth.js';
 import { typeDefs, resolvers } from './schemas/index.js';
+// Import necessary models for seeding if necessary
+//import { Category, Product, User } from './models'; 
+
+// Get your Stripe secret key from environment variables 
+const stripe = stripePackage(process.env.STRIPE_SECRET_KEY);
 
 const PORT = process.env.PORT || 3001;
 const app = express();
