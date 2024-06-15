@@ -51,4 +51,4 @@ export function signToken({ firstName, email, _id }) {
   return jwt.sign({ data: payload }, secret, { expiresIn: expiration });
 }
 
-export { authMiddleware, auth, signToken, AuthenticationError };
+export default auth;
