@@ -1,5 +1,5 @@
-require('dotenv').config(); // Load environment variables from .env file
-
+import * as dotenv from 'dotenv'; // See Note below
+dotenv.config();
 import express from 'express';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
