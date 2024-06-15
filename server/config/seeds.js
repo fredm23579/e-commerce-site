@@ -1,8 +1,11 @@
 // server/config/seeds.js
-//import mongoose from "mongoose";
-import db from "./connection.js";
-import { User, Product, Category } from "../models/index.js";
-import cleanDB from "./cleanDB.js";
+import connectDB from './connection.js'; // Correctly import the function
+import { User, Product, Category } from '../models/index.js';
+import cleanDB from './cleanDB.js';
+
+// Wrap seeding logic in a function
+const seedDB = async () => {
+  try {
 
 db.once("open", async () => {
   try {
@@ -301,4 +304,19 @@ db.once("open", async () => {
   }
   process.exit(1);
 }
+
+}
+)
+console.log('Database seeded successfully!');
+    process.exit(0);
+  } catch (error) {
+    console.error('Error seeding database:', error);
+    process.exit(1); 
+  }
+};
+
+// Connect to the database, then call the seed function
+connectDB().then(() => {
+  seedDB();
 });
+;
