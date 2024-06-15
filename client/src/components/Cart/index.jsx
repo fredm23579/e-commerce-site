@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
-import { useLazyQuery, useMutation } from '@apollo/client'; // Use useLazyQuery instead of useQuery
-import { QUERY_CHECKOUT, CREATE_CHECKOUT_SESSION } from '../../utils/queries';  // Import from queries.jsimport { idbPromise } from '../../utils/helpers';
+import { useLazyQuery, useMutation } from '@apollo/client';
+import { QUERY_CHECKOUT, CREATE_CHECKOUT_SESSION } from '../../utils/mutations'; // Import from mutations.js
 import CartItem from '../CartItem';
 import Auth from '../../utils/auth';
 import { useStoreContext } from '../../utils/GlobalState';

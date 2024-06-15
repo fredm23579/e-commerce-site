@@ -54,6 +54,14 @@ export const CREATE_CHECKOUT_SESSION = gql`
   }
 `;
 
+export const QUERY_CHECKOUT = gql`   // Move QUERY_CHECKOUT here
+  mutation checkout($products: [ID]!) {
+    checkout(products: $products) {
+      session
+    }
+  }
+`;
+
 export const ADD_TO_WISHLIST = gql`
   mutation addToWishlist($productId: ID!) {
     addToWishlist(productId: $productId) {
@@ -117,3 +125,4 @@ export const REMOVE_FROM_FAVORITES = gql`
     }
   }
 `;
+
