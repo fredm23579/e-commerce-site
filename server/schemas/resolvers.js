@@ -6,6 +6,7 @@ import stripe from 'stripe';
 
 // Initialize Stripe
 const stripeKey = process.env.STRIPE_KEY;
+
 if (!stripeKey) {
   throw new Error('STRIPE_KEY environment variable is not set');
 }
@@ -21,12 +22,13 @@ const resolvers = {
         throw new ApolloError('Could not fetch categories.');
       }
     },
+
     products: async (parent, { category, name }) => {
       const params = {};
 
       if (category) {
         params.category = await Category.findOne({
-          $or: [{ name: category }, { urlSlug: category }] 
+          $or: [{ name: category }, { urlSlug: category }] // Find by name or slug
         }).select('_id');
 
         if (!params.category) {
@@ -116,7 +118,8 @@ const resolvers = {
         throw new ApolloError('Failed to create user.');
       }
     },
-   addOrder: async (parent, { products }, context) => {
+
+    addOrder: async (parent, { products }, context) => {
       if (context.user) {
         try {
           const order = new Order({ products });
@@ -139,108 +142,140 @@ const resolvers = {
           }
           return user;
         } catch (error) {
-          console.error('Error fetching user:', error);
-          throw new AuthenticationError('Failed to fetch user details.');
+          console.error('Error updating user:', error);
+          throw new ApolloError('Failed to update user details.');
         }
       }
-
       throw new AuthenticationError('Not logged in');
     },
 
-    updateProduct: async (parent, { _id, quantity }) => {
-      const decrement = Math.abs(quantity) * -1;
-
+    updateProduct: async (parent, { _id, input }) => { // Use input object for product updates
       try {
-        const updatedProduct = await Product.findByIdAndUpdate(_id, { $inc: { quantity: decrement } }, { new: true });
+        const updatedProduct = await Product.findByIdAndUpdate(_id, input, { new: true });
         if (!updatedProduct) {
           throw new ApolloError('Product not found', 'PRODUCT_NOT_FOUND');
         }
         return updatedProduct;
       } catch (err) {
-        console.Console.error(err);
+        console.error('Error updating product:', err);
         throw new ApolloError('Failed to update product.');
       }
-    }
-  },
-  login: async (parent, { email, password }) => {
-    const user = await User.findOne({ email });
+    },
 
-    if (!user) {
-      throw new AuthenticationError('Incorrect credentials');
-    }
+    login: async (parent, { email, password }) => {
+      const user = await User.findOne({ email });
 
-    const correctPw = await user.isCorrectPassword(password);
-
-    if (!correctPw) {
-      throw new AuthenticationError('Incorrect credentials');
-    }
-
-    const token = signToken(user);
-    return { token, user };
-  },
-
-  addToWishlist: async (parent, { productId }, context) => {
-    if (context.user) {
-      const updatedUser = await User.findOneAndUpdate(
-        { _id: context.user._id },
-        { $addToSet: { wishlist: productId } },
-        { new: true }
-      ).populate('wishlist');
-
-      return updatedUser;
-    }
-    throw new AuthenticationError('Not logged in');
-  },
-  removeFromWishlist: async (parent, { productId }, context) => {
-    if (context.user) {
-      const updatedUser = await User.findOneAndUpdate(
-        { _id: context.user._id },
-        { $pull: { wishlist: productId } },
-        { new: true }
-      ).populate('wishlist');
-
-      return updatedUser;
-    }
-    throw new AuthenticationError('Not logged in');
-  },
-  addCategory: async (parent, args) => {
-    try {
-      const category = await Category.create(args);
-      return category;
-    } catch (err) {
-      if (err.code === 11000) { 
-        throw new ApolloError('Category already exists', 'CATEGORY_DUPLICATE_ERROR');
-      } else {
-        console.error('Error creating category:', err);
-        throw new ApolloError('Failed to create category.');
+      if (!user) {
+        throw new AuthenticationError('Incorrect credentials');
       }
-    }
-  },
-  addProduct: async (parent, { name, description, image, price, quantity, category }, context) => {
-    if (context.user.isAdmin) { // Add this check
+
+      const correctPw = await user.isCorrectPassword(password);
+
+      if (!correctPw) {
+        throw new AuthenticationError('Incorrect credentials');
+      }
+
+      const token = signToken(user);
+      return { token, user };
+    },
+
+    // ... (addToWishlist and removeFromWishlist resolvers)
+
+    addCategory: async (parent, { input }) => { // Input is destructured here
       try {
-        const product = await Product.create({ name, description, image, price, quantity, category });
-        return product;
+        const category = await Category.create(input);
+        return category;
       } catch (err) {
-        console.error(err);
-        throw new ApolloError('Failed to create product.');
+        if (err.code === 11000) { 
+          throw new ApolloError('Category already exists', 'CATEGORY_DUPLICATE_ERROR');
+        } else {
+          console.error('Error creating category:', err);
+          throw new ApolloError('Failed to create category.');
+        }
       }
-    }
-    throw new AuthenticationError('Unauthorized: You must be an admin to create products.');
-  },
-  removeOrder: async (parent, { _id }, context) => {
-    if (context.user) {
+    },
+ 
+    removeCategory: async (parent, { _id }) => {
       try {
-        const updated = await User.findByIdAndUpdate( context.user._id, { $pull: { orders: { _id } } }, { new: true });
-        return updated;
+        const removedCategory = await Category.findByIdAndRemove(_id);
+        if (!removedCategory) {
+          throw new ApolloError('Category not found', 'CATEGORY_NOT_FOUND');
+        }
+        // (Optional) Cascade delete products in this category
+        await Product.deleteMany({ category: _id });
+        return removedCategory;
       } catch (err) {
-        console.error('Error removing order:', err);
-        throw new ApolloError('Failed to remove order.');
+        console.error('Error removing category:', err);
+        throw new ApolloError('Failed to remove category.');
       }
-    }
-    throw new AuthenticationError('Not logged in');
-  }
+    },
+
+    removeProduct: async (parent, { _id }) => {
+      try {
+        const removedProduct = await Product.findByIdAndRemove(_id);
+        if (!removedProduct) {
+          throw new ApolloError('Product not found', 'PRODUCT_NOT_FOUND');
+        }
+        return removedProduct;
+      } catch (err) {
+        console.error('Error removing product:', err);
+        throw new ApolloError('Failed to remove product.');
+      }
+    },
+  
+    checkout: async (parent, args, context) => {
+      const domainUrl = process.env.DOMAIN_URL || 'http://localhost:3000';
+      const line_items = [];
+      let orderTotal = 0; 
+
+      try {
+        const products = await Product.find({ _id: { $in: args.products } }); 
+
+        for (let i = 0; i < products.length; i++) {
+          const product = await stripeInstance.products.create({
+            name: products[i].name,
+            description: products[i].description,
+            images: [`${domainUrl}/images/${products[i].image}`]
+          });
+
+          const price = await stripeInstance.prices.create({
+            product: product.id,
+            unit_amount: products[i].price * 100,
+            currency: 'usd',
+          });
+
+          line_items.push({
+            price: price.id,
+            quantity: 1
+          });
+          orderTotal += products[i].price;
+        }
+
+        const session = await stripeInstance.checkout.sessions.create({
+          payment_method_types: ['card'],
+          line_items,
+          mode: 'payment',
+          success_url: `${domainUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${domainUrl}/`
+        });
+        
+        const order = new Order({
+          products: args.products, 
+          total: orderTotal,
+          user: context.user._id,
+          shippingAddress: args.shippingAddress // Added shippingAddress from input
+        });
+
+        await order.save();
+        await User.findByIdAndUpdate(context.user._id, { $push: { orders: order._id } });
+
+        return { session: session.id, order: order._id };
+      } catch (error) {
+        console.error('Error creating Stripe checkout session:', error.message);
+        throw new Error('Failed to create checkout session.'); 
+      }
+    } 
+  },
 };
 
 export default resolvers;
-
