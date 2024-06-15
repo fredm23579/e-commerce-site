@@ -12,8 +12,8 @@ import {
 } from '@apollo/client';
 import { onError } from '@apollo/client/link/error'; 
 import { setContext } from '@apollo/client/link/context';
-import { toast, Slide } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; // Import the CSS
+import { toast, ToastContainer, Slide } from 'react-toastify';
+
 
 import App from './App';
 

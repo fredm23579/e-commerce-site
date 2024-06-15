@@ -2,9 +2,8 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { Suspense, lazy } from 'react'; // For lazy loading and Suspense
-
+import './App.css';
 import Nav from './components/Nav';
 import { StoreProvider } from './utils/GlobalState';
 import Home from './pages/Home';
