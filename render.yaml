@@ -1,37 +1,28 @@
 services:
-  - type: web       # This should be 'web' for a Node.js environment
+  - type: web
     name: e-commerce-site
-    env: node       # Use the Node.js environment
-    runtime: node   # Specify 'node' to run a server
+    env: node
+    runtime: node
     repo: https://github.com/fredm23579/e-commerce-site
     branch: works
-
-    # Build and start commands
-    buildCommand: npm install @vitejs/plugin-react && npm run render-build   # Build frontend and backend
-    startCommand: node --experimental-modules server/server.js   # Start the backend server
-
-    # Static files configuration
-    staticPublishPath: client/dist   # Path to built frontend assets
-
-    # Enable pull request previews (optional)
+    buildCommand: npm install @vitejs/plugin-react && npm run render-build
+    startCommand: node server/server.js
+    staticPublishPath: client/dist
     pullRequestPreviewsEnabled: true
-
     envVars:
-      # Environment Variables (Securely managed in Render dashboard)
       - key: NODE_ENV
         value: production
       - key: MONGODB_URI 
         fromDatabase:
           name: mongodb-ecommerce-site
           property: connectionString
-      - key: STRIPE_SECRET_KEY   
-        fromSecret: stripe_secret_key   # Reference secret named 'stripe_secret_key'
+      - key: STRIPE_SECRET_KEY
+        fromSecret: stripe_secret_key
       - key: REACT_APP_BACKEND_URL
-        value: https://e-commerce-site-us2y.onrender.com/  
-
-    # Use a dedicated database service instead of exposing MONGODB_URI
+        value: https://e-commerce-site-us2y.onrender.com
+      - key: REACT_APP_API_URL
+        value: https://e-commerce-site-us2y.onrender.com/graphql
     database:
       type: mongodb
-      name: mongodb-ecommerce-site # Match with the fromDatabase key above
-
+      name: mongodb-ecommerce-site
 version: "1"

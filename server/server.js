@@ -1,5 +1,6 @@
+// server/server.js
 import express from 'express';
-import * as dotenv from 'dotenv'; // Load environment variables
+import * as dotenv from 'dotenv';
 dotenv.config();
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
@@ -11,7 +12,7 @@ import { fileURLToPath } from 'url';
 
 import { typeDefs, resolvers } from './schemas/index.js';
 import { authMiddleware } from './utils/auth.js';
-import connectDB from './config/connection.js'; // Import the connectDB function
+import connectDB from './config/connection.js';
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -24,11 +25,10 @@ const server = new ApolloServer({
 });
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename); 
+const __dirname = path.dirname(__filename);
 
-// Error Handling Middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack); // Log the error
+  console.error(err.stack);
   const statusCode = err.statusCode || 500;
   res.status(statusCode).json({
     error: {
@@ -38,26 +38,20 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Unhandled Promise Rejection Handler
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  // Optionally exit the process if it's a critical error: process.exit(1);
 });
 
 async function startApolloServer() {
-  await connectDB();  // Connect to the database
-  
-  // Start the Apollo server before setting up middleware
   await server.start();
-
-  // CORS configuration (replace with your React app's origin)
+  
   const corsOptions = {
-    origin: process.env.REACT_APP_FRONTEND_URL || 'http://localhost:3000', 
+    origin: process.env.REACT_APP_FRONTEND_URL || 'http://localhost:3000',
     methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type', 'Authorization'], 
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   };
-  app.use(cors(corsOptions)); 
+  app.use(cors(corsOptions));
 
   app.use(express.urlencoded({ extended: false }));
   app.use(express.json());
@@ -65,10 +59,9 @@ async function startApolloServer() {
 
   app.use('/graphql', expressMiddleware(server, { context: authMiddleware }));
 
-  // Create checkout session route
   app.post('/create-checkout-session', async (req, res) => {
     const { products } = req.body;
-    const domainUrl = process.env.DOMAIN_URL || 'http://localhost:3000'; 
+    const domainUrl = process.env.DOMAIN_URL || 'http://localhost:3000';
 
     const line_items = products.map(product => ({
       price_data: {
@@ -78,7 +71,7 @@ async function startApolloServer() {
           description: product.description,
           images: [`${domainUrl}/images/${product.image}`],
         },
-        unit_amount: product.price * 100, 
+        unit_amount: product.price * 100,
       },
       quantity: product.purchaseQuantity,
     }));
@@ -99,17 +92,19 @@ async function startApolloServer() {
     }
   });
 
-  // Serve static assets
   if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, '../client/dist')));
     app.get('*', (req, res) => {
       res.sendFile(path.join(__dirname, '../client/dist/index.html'));
     });
   }
+  
+  await connectDB();
+  await server.start();
 
   app.listen(PORT, () => {
     console.log(`API server running on port ${PORT}!`);
-    console.log(`Use GraphQL at http://localhost:${PORT}/graphql`);
+    console.log(`Use GraphQL at http://localhost:${PORT}${server.graphqlPath}`);
   });
 };
 
