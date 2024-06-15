@@ -1,54 +1,73 @@
+// server/models/Category.js
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import mongooseSlugUpdater from 'mongoose-slug-updater';
+import slugify from 'slugify';
+
+const { Schema } = mongoose;
+
+mongoose.plugin(mongooseSlugUpdater); 
+
+const categorySchema = new Schema({
+  name: {
+    type: String,
+    required: [true, 'Category name is required'],
+    trim: true,
+    minlength: [3, 'Category name must be at least 3 characters long'],
+    maxlength: [50, 'Category name cannot exceed 50 characters'],
+  },
+  description: {
+    type: String,
+    trim: true
+  },
+  urlSlug: {
+    type: String,
+    slug: "name",  
+    unique: true,
+    slugPaddingSize: 4,
+    index: true  
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+// Pre-save middleware for slug generation and uniqueness check (with error handling)
+categorySchema.pre('save', async function (next) {
+  try {
+    if (!this.urlSlug) {
+      this.urlSlug = slugify(this.name, { lower: true });
+    }
+
+    // Robust uniqueness check with retries
+    let slug = this.urlSlug;
+    let counter = 1;
+    while (await this.constructor.exists({ urlSlug: slug })) {
+      slug = `${this.urlSlug}-${counter}`;
+      counter++;
+    }
+    this.urlSlug = slug;
+
+    next();
+  } catch (error) {
+    next(new Error('Slug generation or uniqueness check failed')); 
+  }
+});
+
+
+// Custom validation for name (with error handling)
+categorySchema.path('name').validate(async function (value) {
+  try {
+    const existingSlug = slugify(value, { lower: true });
+    const existingCategory = await this.constructor.findOne({ urlSlug: existingSlug });
+    return !existingCategory; // True if slug is unique
+  } catch (error) {
+    console.error("Error during name validation:", error);
+    throw new Error('Category validation failed'); 
+  }
+}, 'Category with similar name already exists');
+
+
 const Category = mongoose.model('Category', categorySchema);
-export default Category; // Export the Mongoose model
 
-dotenv.config();
-
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/shopShopDB';
-const mongooseOptions = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-};
-
-const connectDB = async () => {
-  try {
-    await mongoose.connect(MONGODB_URI, mongooseOptions);
-    console.log('MongoDB Connected:', MONGODB_URI);
-  } catch (err) {
-    console.error('MongoDB Connection Error:', err.message);
-    process.exit(1); // Exit on error
-  }
-};
-
-mongoose.connection.on('connected', () => {
-  console.log('Mongoose default connection open to', MONGODB_URI);
-});
-
-mongoose.connection.on('error', (err) => {
-  console.error('Mongoose default connection error:', err.message);
-});
-
-mongoose.connection.on('disconnected', () => {
-  console.log('Mongoose default connection disconnected');
-});
-
-process.on('SIGINT', async () => {
-  try {
-    await mongoose.connection.close();
-    console.log(
-      'Mongoose default connection disconnected through app termination'
-    );
-    process.exit(0);
-  } catch (err) {
-    console.error(
-      'Error closing MongoDB connection on app termination:',
-      err
-    );
-    process.exit(1);
-  }
-});
-
-connectDB(); // Initialize the connection
-export default mongoose.connection; // Export for use in other modules
+export default Category;
