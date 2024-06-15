@@ -68,10 +68,12 @@ async function startApolloServer() {
 
   // Start the server after the database connection is established
   try {
-    await db.once('open', () => {}); // Use the 'open' event to wait for connection
+    await connectDB(); 
     await new Promise(resolve => httpServer.listen({ port: PORT }, resolve));
     console.log(`API server running on port ${PORT}!`);
-    console.log(`Use GraphQL at http://localhost:${PORT}${server.graphqlPath}`);
+
+    // Access server.graphqlPath AFTER server.start()
+    console.log(`Use GraphQL at http://localhost:${PORT}${server.graphqlPath}`); 
   } catch (error) {
     console.error('Error starting the server:', error);
   }
