@@ -27,25 +27,6 @@ const server = new ApolloServer({
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename); 
 
-
-// Error Handling Middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack); // Log the error
-  const statusCode = err.statusCode || 500;
-  res.status(statusCode).json({
-    error: {
-      message: err.message,
-      extensions: err.extensions,
-    },
-  });
-});
-
-// Unhandled Promise Rejection Handler
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  // Optionally exit the process if it's a critical error: process.exit(1);
-});
-
 async function startApolloServer() {
   await server.start(); 
 
@@ -105,12 +86,28 @@ async function startApolloServer() {
       res.sendFile(path.join(__dirname, '../client/dist/index.html'));
     });
   }
+
+  // Error Handling Middleware
+  app.use((err, req, res, next) => {
+    console.error(err.stack); // Log the error
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      error: {
+        message: err.message,
+        extensions: err.extensions,
+      },
+    });
+  });
+
+  // Unhandled Promise Rejection Handler
+  process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    // Optionally exit the process if it's a critical error: process.exit(1);
+  });
   
   // Connect to the database, then start the server
   await connectDB();  
-  await server.start();
-    
-  app.listen(PORT, () => {
+  httpServer.listen(PORT, () => {
     console.log(`API server running on port ${PORT}!`);
     console.log(`Use GraphQL at http://localhost:${PORT}${server.graphqlPath}`);
   });
