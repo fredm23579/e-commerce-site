@@ -4,24 +4,16 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 3001,
-    open: true,
+    port: 3000,
     proxy: {
       '/graphql': {
-        target: 'https://e-commerce-site-us2y.onrender.com/graphql', // Ensure the path includes /graphql
-        secure: true,          // Set to true if your backend uses HTTPS (recommended)
+        target: process.env.REACT_APP_API_URL || 'http://localhost:3001',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/graphql/, ''), // Remove '/graphql' prefix from requests
+        rewrite: (path) => path.replace(/^\/graphql/, ''),
       },
-      '/images': { // Proxy for images
-        target: 'https://e-commerce-site-us2y.onrender.com/', 
-        secure: true,
-        changeOrigin: true
-      }
-    }
+    },
   },
-  test: {
-    globals: true,
-    environment: 'happy-dom'
-  }
+  build: {
+    outDir: 'dist',
+  },
 });
