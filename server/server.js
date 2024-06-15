@@ -1,16 +1,17 @@
+// server/server.js
 import express from 'express';
 import * as dotenv from 'dotenv';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import path from 'path';
 import cors from 'cors';
-import stripe from 'stripe';
+import stripePackage from 'stripe';
 import http from 'http';
 import { fileURLToPath } from 'url';
 
 import { typeDefs, resolvers } from './schemas/index.js';
 import { authMiddleware } from './utils/auth.js';
-import db from './config/connection.js';
+import connectDB from './config/connection.js'; // Import the connectDB function
 
 dotenv.config();
 
@@ -24,8 +25,7 @@ const server = new ApolloServer({
 });
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename); 
-
+const __dirname = path.dirname(__filename);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
@@ -34,49 +34,71 @@ app.use((err, req, res, next) => {
   res.status(statusCode).json({
     error: {
       message: err.message,
-      extensions: err.extensions, // Include additional error details for GraphQL errors
+      extensions: err.extensions,
     },
   });
 });
 
-async function startApolloServer() {
+const startApolloServer = async () => {
   await server.start();
-  
+
   // CORS configuration (replace with your React app's origin)
   const corsOptions = {
-    origin: process.env.REACT_APP_FRONTEND_URL || 'http://localhost:3000', 
+    origin: process.env.REACT_APP_FRONTEND_URL || 'http://localhost:3000',
     methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type', 'Authorization'], 
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   };
-  app.use(cors(corsOptions)); 
+  app.use(cors(corsOptions));
 
   app.use(express.urlencoded({ extended: false }));
   app.use(express.json());
-  app.use('/images', express.static(path.join(__dirname, '../client/dist/images')));  
+  app.use('/images', express.static(path.join(__dirname, '../client/dist/images')));
 
   app.use('/graphql', expressMiddleware(server, { context: authMiddleware }));
-  // ... (Stripe checkout route logic) ...
 
-  // Serve static assets
+  // Create checkout session route (ensure proper image paths)
+  app.post('/create-checkout-session', async (req, res) => {
+    const { products } = req.body;
+    const domainUrl = process.env.DOMAIN_URL || 'http://localhost:3000';
+
+    const line_items = products.map(product => ({
+      price_data: {
+        currency: 'usd',
+        product_data: {
+          name: product.name,
+          description: product.description,
+          images: [`${domainUrl}/images/${product.image}`],
+        },
+        unit_amount: product.price * 100,
+      },
+      quantity: product.purchaseQuantity,
+    }));
+
+    try {
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items,
+        mode: 'payment',
+        success_url: `${domainUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${domainUrl}/`,
+      });
+
+      res.json({ id: session.id });
+    } catch (error) {
+      console.error('Error creating Stripe checkout session:', error.message);
+      res.status(500).json({ error: 'Failed to create checkout session.' });
+    }
+  });
+
+  // Serve static assets in production ONLY
   if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, '../client/dist')));
     app.get('*', (req, res) => {
       res.sendFile(path.join(__dirname, '../client/dist/index.html'));
     });
   }
+};
 
-  // Start the server after the database connection is established
-  try {
-    await connectDB(); 
-    await new Promise(resolve => httpServer.listen({ port: PORT }, resolve));
-    console.log(`API server running on port ${PORT}!`);
-
-    // Access server.graphqlPath AFTER server.start()
-    console.log(`Use GraphQL at http://localhost:${PORT}${server.graphqlPath}`); 
-  } catch (error) {
-    console.error('Error starting the server:', error);
-  }
-}
-
+// Start Apollo Server
 startApolloServer();
