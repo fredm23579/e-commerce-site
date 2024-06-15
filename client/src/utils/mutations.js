@@ -85,3 +85,19 @@ export const REMOVE_FROM_WISHLIST = gql`
     }
   }
 `;
+
+export const ADD_TO_FAVORITES = gql`
+  mutation addToFavorites($productId: ID!) {
+    addToFavorites(productId: $productId) {
+      _id
+      favorites {
+        _id
+        name
+        description
+        price
+        quantity
+        image
+      }
+    }
+  }
+`;
