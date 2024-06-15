@@ -2,13 +2,17 @@
 import { gql } from 'apollo-server-express';
 
 const typeDefs = gql`
-  # Category Type (Updated)
+  # Scalar Type for Dates
+  scalar Date
+
+  # Category Type
   type Category {
     _id: ID!
     name: String!
     urlSlug: String! 
   }
 
+  # Product Type
   type Product {
     _id: ID!
     name: String!
@@ -19,17 +23,24 @@ const typeDefs = gql`
     category: Category!
   }
 
-  # Order Type (Updated)
-  type Order {
-    _id: ID!
-    purchaseDate: String!
-    products: [Product!]!
-    total: Float!         # Added field for the total cost of the order
-    status: String!      # Added field to track order status
-    shippingAddress: ShippingAddress # Added field for shipping address
+  # OrderItem Type
+  type OrderItem {
+    product: Product!
+    quantity: Int!
+    price: Float!
   }
 
-  type ShippingAddress {  # New type for shipping address
+  # Order Type
+  type Order {
+    _id: ID!
+    purchaseDate: Date!
+    products: [OrderItem!]!
+    total: Float!         
+    status: String!      
+    shippingAddress: ShippingAddress
+  }
+
+  type ShippingAddress {
     street: String!
     city: String!
     state: String!
@@ -37,6 +48,7 @@ const typeDefs = gql`
     country: String!
   }
 
+  # User Type
   type User {
     _id: ID!
     firstName: String!
@@ -44,34 +56,49 @@ const typeDefs = gql`
     email: String!
     orders: [Order!]!
     wishlist: [Product!]!
-    favorites: [Product!]!
   }
 
+  # Checkout Session Type
   type Checkout {
     session: ID!
     order: ID!
   }
 
+  # Auth Type
   type Auth {
     token: String!
     user: User!
   }
 
-  # ProductInput (Updated)
+  # Input Types
   input ProductInput {
     _id: ID!
     purchaseQuantity: Int!
   }
 
+  input CategoryInput {  
+    name: String!
+    description: String
+  }
+
+  input ShippingAddressInput {
+    street: String!
+    city: String!
+    state: String!
+    postalCode: String!
+    country: String!
+  }
+
+  # Query Definitions
   type Query {
     categories: [Category!]!
     products(category: ID, name: String): [Product!]!
     product(_id: ID!): Product
     user: User
     order(_id: ID!): Order
-    checkout(products: [ProductInput!]!): Checkout
   }
 
+  # Mutation Definitions (updated)
   type Mutation {
     addUser(firstName: String!, lastName: String!, email: String!, password: String!): Auth!
     addOrder(products: [ProductInput!]!): Order!
@@ -80,8 +107,13 @@ const typeDefs = gql`
     login(email: String!, password: String!): Auth!
     addToWishlist(productId: ID!): User!
     removeFromWishlist(productId: ID!): User!
-    addToFavorites(productId: ID!): User!
-    removeFromFavorites(productId: ID!): User!
+    addCategory(input: CategoryInput!): Category!  # addCategory mutation
+    updateCategory(_id: ID!, input: CategoryInput!): Category! # updateCategory mutation
+    removeCategory(_id: ID!): Category!   # removeCategory mutation
+    addProduct(input: ProductInput!): Product!   # addProduct mutation
+    updateProduct(_id: ID!, input: ProductInput!): Product! # updateProduct mutation
+    removeProduct(_id: ID!): Product! # removeProduct mutation
+    checkout(products: [ID!]!, shippingAddress: ShippingAddressInput!): Checkout
   }
 `;
 
