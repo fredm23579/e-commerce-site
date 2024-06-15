@@ -14,7 +14,7 @@ import {
 } from '../../utils/mutations';
 import { toast } from 'react-toastify';
 import { Card, Button, Spinner } from 'react-bootstrap'; // Import Bootstrap components
-import './style.css'; 
+import '../Cart/style.css'; 
 
 function ProductItem({ item }) { // Destructure item directly
   const [state, dispatch] = useStoreContext();
