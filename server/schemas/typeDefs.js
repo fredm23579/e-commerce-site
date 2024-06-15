@@ -1,10 +1,12 @@
+// server/schemas/typeDefs.js
 import { gql } from 'apollo-server-express';
 
 const typeDefs = gql`
+  # Category Type (Updated)
   type Category {
     _id: ID!
     name: String!
-    urlSlug: String!  # Add urlSlug to the Category type
+    urlSlug: String! 
   }
 
   type Product {
@@ -17,10 +19,22 @@ const typeDefs = gql`
     category: Category!
   }
 
+  # Order Type (Updated)
   type Order {
     _id: ID!
-    purchaseDate: String!  # String is likely a better representation for dates
-    products: [Product!]!   
+    purchaseDate: String!
+    products: [Product!]!
+    total: Float!         # Added field for the total cost of the order
+    status: String!      # Added field to track order status
+    shippingAddress: ShippingAddress # Added field for shipping address
+  }
+
+  type ShippingAddress {  # New type for shipping address
+    street: String!
+    city: String!
+    state: String!
+    postalCode: String!
+    country: String!
   }
 
   type User {
@@ -35,14 +49,15 @@ const typeDefs = gql`
 
   type Checkout {
     session: ID!
-    order: ID!  # Add order ID to the Checkout type
+    order: ID!
   }
 
   type Auth {
-    token: String! 
+    token: String!
     user: User!
   }
 
+  # ProductInput (Updated)
   input ProductInput {
     _id: ID!
     purchaseQuantity: Int!
@@ -59,7 +74,7 @@ const typeDefs = gql`
 
   type Mutation {
     addUser(firstName: String!, lastName: String!, email: String!, password: String!): Auth!
-    addOrder(products: [ProductInput!]!): Order!  # Use ProductInput for type safety
+    addOrder(products: [ProductInput!]!): Order!
     updateUser(firstName: String, lastName: String, email: String, password: String): User
     updateProduct(_id: ID!, quantity: Int!): Product
     login(email: String!, password: String!): Auth!
@@ -70,4 +85,4 @@ const typeDefs = gql`
   }
 `;
 
-export default typeDefs; 
+export default typeDefs;
