@@ -45,8 +45,8 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 async function startApolloServer() {
-  await server.start(); 
-
+  await connectDB();  // Connect to the database
+  
   // CORS configuration (replace with your React app's origin)
   const corsOptions = {
     origin: process.env.REACT_APP_FRONTEND_URL || 'http://localhost:3000', 
@@ -103,11 +103,10 @@ async function startApolloServer() {
       res.sendFile(path.join(__dirname, '../client/dist/index.html'));
     });
   }
-  
-  // Connect to the database, then start the server
-  await connectDB();  
+
+  // Start the Apollo server
   await server.start();
-    
+
   app.listen(PORT, () => {
     console.log(`API server running on port ${PORT}!`);
     console.log(`Use GraphQL at http://localhost:${PORT}/graphql`);
