@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { useLazyQuery, useMutation } from '@apollo/client'; // Use useLazyQuery instead of useQuery
-import { QUERY_CHECKOUT, CREATE_CHECKOUT_SESSION } from '../../utils/mutations'; // Changed import to mutations file
-import { idbPromise } from '../../utils/helpers';
+import { QUERY_CHECKOUT, CREATE_CHECKOUT_SESSION } from '../../utils/queries';  // Import from queries.jsimport { idbPromise } from '../../utils/helpers';
 import CartItem from '../CartItem';
 import Auth from '../../utils/auth';
 import { useStoreContext } from '../../utils/GlobalState';
 import { TOGGLE_CART, ADD_MULTIPLE_TO_CART } from '../../utils/actions';
 import { Alert, Container, Row, Col, Button, Spinner } from 'react-bootstrap';
+
+
 import './style.css';
 
 const stripePromise = loadStripe('pk_test_51POVBjP9wvI3QZJomGf7dJhG9bbY8SsOp99Y9IKchswkbRBgnurqqyliGagcAFPygoyj9BUKnmU399ZbnJVng83k007L5gGETN'); 
