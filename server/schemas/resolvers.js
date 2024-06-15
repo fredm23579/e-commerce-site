@@ -1,5 +1,8 @@
-import { User, Product, Category, Order } from '../models';
-import { signToken } from '../utils/auth';
+import User from '../models/User.js'; // Add .js extension for explicit import
+import Product from '../models/Product.js';
+import Category from '../models/Category.js';
+import Order from '../models/Order.js';
+import { signToken } from '../utils/auth.js';
 import stripe from 'stripe';
 import { AuthenticationError } from 'apollo-server-express';
 
