@@ -99,20 +99,21 @@ const typeDefs = gql`
   }
 
   # Mutation Definitions (updated)
-  type Mutation {
+ type Mutation {
     addUser(firstName: String!, lastName: String!, email: String!, password: String!): Auth!
     addOrder(products: [ProductInput!]!): Order!
     updateUser(firstName: String, lastName: String, email: String, password: String): User
-    updateProduct(_id: ID!, quantity: Int!): Product
+    updateProduct(_id: ID!, input: ProductInput!): Product! # Make sure input is of type ProductInput
     login(email: String!, password: String!): Auth!
     addToWishlist(productId: ID!): User!
     removeFromWishlist(productId: ID!): User!
-    addCategory(input: CategoryInput!): Category!  # addCategory mutation
-    updateCategory(_id: ID!, input: CategoryInput!): Category! # updateCategory mutation
-    removeCategory(_id: ID!): Category!   # removeCategory mutation
-    addProduct(input: ProductInput!): Product!   # addProduct mutation
-    updateProduct(_id: ID!, input: ProductInput!): Product! # updateProduct mutation
-    removeProduct(_id: ID!): Product! # removeProduct mutation
+    addToFavorites(productId: ID!): User!
+    removeFromFavorites(productId: ID!): User!
+    addCategory(input: CategoryInput!): Category!
+    updateCategory(_id: ID!, input: CategoryInput!): Category!
+    removeCategory(_id: ID!): Category!
+    addProduct(input: ProductInput!): Product!
+    removeProduct(_id: ID!): Product!
     checkout(products: [ID!]!, shippingAddress: ShippingAddressInput!): Checkout
   }
 `;
