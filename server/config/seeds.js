@@ -3,7 +3,6 @@ import mongoose from 'mongoose';
 import db from './connection.js';
 import { User, Product, Category } from '../models/index.js';
 import cleanDB from './cleanDB.js';
-
 db.once('open', async () => {
   try {
     // Clear Collections
