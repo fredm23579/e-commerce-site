@@ -1,45 +1,54 @@
-import { GraphQLError } from 'graphql';
+// server/utils/auth.js
 import jwt from 'jsonwebtoken';
+import { GraphQLError } from 'graphql';
 
-const secret = process.env.JWT_SECRET || 'mysecretssshhhhhhh'; // Use environment variable if available
+// Load JWT secret from environment variable (or a default for development)
+const secret = process.env.JWT_SECRET || 'mysecretssshhhhhhh'; // Securely store in env vars
 const expiration = '2h';
 
-const auth = {
-  // Custom Authentication Error
-  AuthenticationError: new GraphQLError('Could not authenticate user.', {
-    extensions: {
-      code: 'UNAUTHENTICATED',
-    },
-  }),
+// Define a custom AuthenticationError class
+export class AuthenticationError extends GraphQLError {
+  constructor(message = 'Could not authenticate user.') {
+    super(message, {
+      extensions: {
+        code: 'UNAUTHENTICATED',
+        http: { status: 401 }, // Set HTTP status to 401 Unauthorized
+      },
+    });
+  }
+}
 
-// Authentication Middleware
-  authMiddleware: function ({ req }) {
-    let token = req.body.token || req.query.token || req.headers.authorization;
+// Authentication middleware function
+export function authMiddleware({ req }) {
+  // Allow token to be sent via req.headers.authorization
+  let token = req.headers.authorization || '';
 
-    if (req.headers.authorization) {
-      token = token.split(' ').pop().trim();
-    }
+  // Check for "Bearer " prefix and extract the token
+  if (token.startsWith('Bearer ')) {
+    token = token.split('Bearer ')[1].trim();
+  }
 
-    if (!token) {
-      return req;
-    }
+  if (!token) {
+    // No token, allow request to proceed (unauthenticated)
+    return req; 
+  }
 
-    try {
-      const { data } = jwt.verify(token, secret, { maxAge: expiration });
-      req.user = data;
-    } catch (err) {
-      console.error('Invalid token:', err); // Log error for debugging
-      throw new AuthenticationError('Invalid token'); // Throw custom error
-    }
+  try {
+    // Verify token and get user data out of it
+    const { data } = jwt.verify(token, secret, { maxAge: expiration });
+    req.user = data; // Attach user data to the request for later use
+  } catch (err) {
+    console.error('Invalid token:', err);
+    throw new AuthenticationError('Invalid token');
+  }
 
-    return req;
-  },
+  return req;
+}
 
-  // Sign Token Function
-  signToken: function ({ firstName, email, _id }) {
-    const payload = { firstName, email, _id };
-    return jwt.sign({ data: payload }, secret, { expiresIn: expiration });
-  },
-};
+// Function to sign a new JWT token
+export function signToken({ firstName, email, _id }) {
+  const payload = { firstName, email, _id };
+  return jwt.sign({ data: payload }, secret, { expiresIn: expiration });
+}
 
-export default auth;
+export { authMiddleware, auth, signToken, AuthenticationError };
