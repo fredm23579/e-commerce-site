@@ -1,18 +1,14 @@
-// server/schemas/typeDefs.js
 import { gql } from 'apollo-server-express';
 
 const typeDefs = gql`
-  # Scalar Type for Dates
   scalar Date
 
-  # Category Type
   type Category {
     _id: ID!
     name: String!
     urlSlug: String! 
   }
 
-  # Product Type
   type Product {
     _id: ID!
     name: String!
@@ -23,14 +19,12 @@ const typeDefs = gql`
     category: Category!
   }
 
-  # OrderItem Type
   type OrderItem {
     product: Product!
     quantity: Int!
     price: Float!
   }
 
-  # Order Type
   type Order {
     _id: ID!
     purchaseDate: Date!
@@ -48,7 +42,6 @@ const typeDefs = gql`
     country: String!
   }
 
-  # User Type
   type User {
     _id: ID!
     firstName: String!
@@ -58,19 +51,16 @@ const typeDefs = gql`
     wishlist: [Product!]!
   }
 
-  # Checkout Session Type
   type Checkout {
     session: ID!
     order: ID!
   }
 
-  # Auth Type
   type Auth {
     token: String!
     user: User!
   }
 
-  # Input Types
   input ProductInput {
     _id: ID!
     purchaseQuantity: Int!
@@ -89,7 +79,6 @@ const typeDefs = gql`
     country: String!
   }
 
-  # Query Definitions
   type Query {
     categories: [Category!]!
     products(category: ID, name: String): [Product!]!
@@ -98,17 +87,14 @@ const typeDefs = gql`
     order(_id: ID!): Order
   }
 
-  # Mutation Definitions (updated)
- type Mutation {
+  type Mutation {
     addUser(firstName: String!, lastName: String!, email: String!, password: String!): Auth!
     addOrder(products: [ProductInput!]!): Order!
     updateUser(firstName: String, lastName: String, email: String, password: String): User
-    updateProduct(_id: ID!, input: ProductInput!): Product! # Make sure input is of type ProductInput
+    updateProduct(_id: ID!, input: ProductInput!): Product
     login(email: String!, password: String!): Auth!
     addToWishlist(productId: ID!): User!
     removeFromWishlist(productId: ID!): User!
-    addToFavorites(productId: ID!): User!
-    removeFromFavorites(productId: ID!): User!
     addCategory(input: CategoryInput!): Category!
     updateCategory(_id: ID!, input: CategoryInput!): Category!
     removeCategory(_id: ID!): Category!
