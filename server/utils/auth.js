@@ -46,9 +46,16 @@ export function authMiddleware({ req }) {
 }
 
 // Function to sign a new JWT token
-export function signToken({ firstName, email, _id }) {
-  const payload = { firstName, email, _id };
+export function signToken({ username, email, _id }) { 
+  const payload = { username, email, _id };
   return jwt.sign({ data: payload }, secret, { expiresIn: expiration });
 }
 
-export default auth;
+// Helper functions for authentication checks (optional)
+export function isLoggedIn(context) {
+  return context.user !== undefined;
+}
+
+export function isAdmin(context) {
+  return isLoggedIn(context) && context.user.isAdmin;
+}
