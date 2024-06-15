@@ -1,5 +1,8 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import mongooseSlugUpdater from 'mongoose-slug-updater';
+const Category = mongoose.model('Category', categorySchema);
+export default Category; // Export the Mongoose model
 
 dotenv.config();
 
