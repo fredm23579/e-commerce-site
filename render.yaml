@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: shop-shop
+    runtime: node
+    region: oregon
+    plan: free
+    buildCommand: npm run install && npm run build
+    startCommand: npm start
+    healthCheckPath: /graphql
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: VITE_STRIPE_PUBLIC_KEY
+        sync: false
