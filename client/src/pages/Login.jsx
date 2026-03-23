@@ -4,8 +4,9 @@ import { Link } from 'react-router-dom';
 import { LOGIN } from '../utils/mutations';
 import Auth from '../utils/auth';
 
-function Login(props) {
+function Login() {
   const [formState, setFormState] = useState({ email: '', password: '' });
+  // useMutation captures the error so we can display it in the form.
   const [login, { error }] = useMutation(LOGIN);
 
   const handleFormSubmit = async (event) => {
@@ -15,18 +16,17 @@ function Login(props) {
         variables: { email: formState.email, password: formState.password },
       });
       const token = mutationResponse.data.login.token;
+      // Store the JWT and redirect to the home page.
       Auth.login(token);
     } catch (e) {
-      console.log(e);
+      // The Apollo error is already captured above; log for developer debugging.
+      console.error('[Login] Authentication failed:', e.message);
     }
   };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormState({
-      ...formState,
-      [name]: value,
-    });
+    setFormState({ ...formState, [name]: value });
   };
 
   return (
@@ -42,26 +42,33 @@ function Login(props) {
             name="email"
             type="email"
             id="email"
+            value={formState.email}
             onChange={handleChange}
+            required
           />
         </div>
         <div className="flex-row space-between my-2">
           <label htmlFor="pwd">Password:</label>
           <input
-            placeholder="******"
+            placeholder="••••••"
             name="password"
             type="password"
             id="pwd"
+            value={formState.password}
             onChange={handleChange}
+            required
           />
         </div>
-        {error ? (
-          <div>
+
+        {/* Display a friendly message when credentials are wrong */}
+        {error && (
+          <div className="my-1">
             <p className="error-text">The provided credentials are incorrect</p>
           </div>
-        ) : null}
+        )}
+
         <div className="flex-row flex-end">
-          <button type="submit">Submit</button>
+          <button type="submit">Login</button>
         </div>
       </form>
     </div>
