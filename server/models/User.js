@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const bcrypt = require('bcrypt');
+// bcryptjs is the pure-JavaScript implementation of bcrypt — identical API to
+// the native 'bcrypt' package but with no node-gyp/tar transitive dependency,
+// which eliminates the tar path-traversal CVE (GHSA-qffp-2rhf-9h96).
+const bcrypt = require('bcryptjs');
 const Order = require('./Order');
 
 // Number of bcrypt salt rounds — 10 is the generally recommended default.
